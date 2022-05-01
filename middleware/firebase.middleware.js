@@ -10,7 +10,6 @@ let bucketName = "gs://productdb-eaa0c.appspot.com";
 
 exports.fireBaseStorage = async(request, response, next) => {
     try {
-        console.log("=====================inside try");
 
         await storage.bucket(bucketName).upload(path.join(__dirname, '../', "./public/images/") + request.file.filename, {
             gzip: true,

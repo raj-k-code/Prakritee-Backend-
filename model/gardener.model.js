@@ -43,22 +43,21 @@ const gardenerSchema = new mongoose.Schema({
         userId: {
             type: Schema.Types.ObjectId,
             ref: 'user',
-            required: true
         },
         rate: {
             type: Number,
-            required: true,
             min: 1
         }
     }],
     isVerify: {
-        type: boolean,
+        type: Boolean,
         default: false
     },
     isBlock: {
-        type: boolean,
+        type: Boolean,
         default: true
     },
+
 });
 
 module.exports = mongoose.model("gardener", gardenerSchema);

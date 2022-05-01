@@ -35,11 +35,11 @@ const userSchema = new mongoose.Schema({
         default: new Date().now
     },
     isVerify: {
-        type: boolean,
+        type: Boolean,
         default: false
     },
     isBlock: {
-        type: boolean,
+        type: Boolean,
         default: true
     },
 });

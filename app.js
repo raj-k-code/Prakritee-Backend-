@@ -28,6 +28,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/admin", adminRouter);
 
+
 app.listen(port, () => {
     console.log("-----------SERVER IS STARTED-----------");
 });
