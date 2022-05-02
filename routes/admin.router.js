@@ -43,4 +43,12 @@ router.post('/category/edit', upload.single('categoryImage'),
     adminController.editCategory
 );
 
+router.get('/gardener/gardener-list',
+    adminController.gardenerList
+);
+
+router.get("/nursery/nursery-list", adminController.nurseryList);
+
+router.get("/user/user-list", adminController.userList);
+
 module.exports = router;

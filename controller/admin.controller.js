@@ -3,6 +3,9 @@ const Admin = require("../model/admin.model");
 const { validationResult } = require('express-validator');
 const Category = require('../model/category.model');
 const requests = require("request");
+const Gardener = require('../model/gardener.model');
+const NurseryOwner = require("../model/nurseryowner.model");
+const User = require("../model/user.model");
 
 exports.signin = (request, response) => {
     const error = validationResult(request);
@@ -24,6 +27,7 @@ exports.signin = (request, response) => {
 }
 
 exports.addCategory = (request, response) => {
+    console.log(request.body)
     const error = validationResult(request);
     if (!error.isEmpty()) {
         return response.status(400).json({ errors: error.array() });
@@ -106,4 +110,47 @@ exports.editCategory = (request, response) => {
             console.log(err);
             return response.status(500).json({ error: "Internal server error.." });
         });
+}
+
+
+exports.gardenerList = (request, response) => {
+    Gardener.find().then(result => {
+        if (result.length > 0) {
+            return response.status(201).json(result)
+        } else {
+            console.log(result)
+            return response.status(500).json({ message: "Result Not Found" })
+        }
+    }).catch(err => {
+        console.log(err);
+        return response.status(500).json({ error: "oops something went wrong" })
+    })
+}
+
+exports.nurseryList = (request, response) => {
+    NurseryOwner.find().then(result => {
+        if (result.length > 0) {
+            return response.status(201).json(result)
+        } else {
+            console.log(result)
+            return response.status(500).json({ message: "Result Not Found" })
+        }
+    }).catch(err => {
+        console.log(err);
+        return response.status(500).json({ error: "oops something went wrong" })
+    })
+}
+
+exports.userList = (request, response) => {
+    User.find().then(result => {
+        if (result.length > 0) {
+            return response.status(201).json(result)
+        } else {
+            console.log(result)
+            return response.status(500).json({ message: "Result Not Found" })
+        }
+    }).catch(err => {
+        console.log(err);
+        return response.status(500).json({ error: "oops something went wrong" })
+    })
 }
