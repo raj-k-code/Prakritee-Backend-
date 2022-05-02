@@ -32,7 +32,7 @@ const productSchema = new mongoose.Schema({
             min: 1
         }
     }],
-    Image: {
+    productImage: {
         type: String,
         required: true
     },

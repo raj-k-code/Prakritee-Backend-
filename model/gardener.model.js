@@ -55,7 +55,7 @@ const gardenerSchema = new mongoose.Schema({
     },
     isBlock: {
         type: Boolean,
-        default: true
+        default: false
     },
 
 });
