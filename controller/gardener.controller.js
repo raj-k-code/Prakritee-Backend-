@@ -6,13 +6,21 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const alert = require('alert');
 const { response } = require("express");
+const crypto = require('crypto');
+
+const key = "prakritee@123@05";
+const algo = "aes-256-cbc"
 
 exports.signup = (request, response) => {
-    console.log(request.body);
     const error = validationResult(request);
     if (!error.isEmpty()) {
         return response.status(400).json({ errors: error.array() });
     }
+
+    var cipher = crypto.createCipher(algo, key)
+    var crypted = cipher.update(request.body.gardenerPassword, 'utf8', 'hex');
+    crypted += cipher.final('hex');
+    request.body.gardenerPassword = crypted;
 
     Gardener.create(request.body)
         .then(result => {
@@ -41,10 +49,8 @@ exports.signup = (request, response) => {
                     console.log("SUCCESS===================================\n" + info);
                 }
             });
-            console.log(result)
             return response.status(201).json(result)
         }).catch(err => {
-            console.log(err);
             return response.status(500).json({ message: "Internal Server Error..." })
         })
 }
@@ -53,25 +59,28 @@ exports.signin = (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty())
         return response.status(400).json({ errors: errors.array() });
-    console.log(request.body)
 
     Gardener.findOne({
         gardenerEmail: request.body.gardenerEmail,
-        gardenerPassword: request.body.gardenerPassword,
         isVerify: true,
         isBlock: false
     }).then(result => {
         if (result) {
-            let payload = { subject: result._id };
-            let token = jwt.sign(payload, "giugifsyjhsadgjbjfbbdsfjbjbk");
+            var decipher = crypto.createDecipher(algo, key)
+            var dec = decipher.update(result.gardenerPassword, 'hex', 'utf8')
+            dec += decipher.final('utf8');
 
-            return response.status(201).json({ status: "login success", data: result, token: token })
+            if (dec == request.body.gardenerPassword) {
+                let payload = { subject: result._id };
+                let token = jwt.sign(payload, "giugifsyjhsadgjbjfbbdsfjbjbk");
+
+                return response.status(201).json({ status: "login success", data: result, token: token })
+            } else
+                return response.status(201).json({ message: "Invalid Email And Password" })
         } else {
-            console.log(result)
-            return response.status(500).json({ failed: "login failed" })
+            return response.status(201).json({ failed: "login failed" })
         }
     }).catch(err => {
-        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
@@ -80,7 +89,6 @@ exports.signinWithGoogle = (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty())
         return response.status(400).json({ errors: errors.array() });
-    console.log(request.body)
 
     Gardener.findOne({
         gardenerEmail: request.body.gardenerEmail,
@@ -93,17 +101,14 @@ exports.signinWithGoogle = (request, response) => {
 
             return response.status(201).json({ status: "login success", data: result, token: token })
         } else {
-            console.log(result)
-            return response.status(500).json({ failed: "login failed" })
+            return response.status(201).json({ failed: "login failed" })
         }
     }).catch(err => {
-        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
 
 exports.updateProfile = (request, response) => {
-    console.log(request.body);
     const error = validationResult(request);
     if (!error.isEmpty()) {
         return response.status(400).json({ errors: error.array() });
@@ -119,27 +124,22 @@ exports.updateProfile = (request, response) => {
             $set: request.body
         })
         .then(result => {
-            console.log(result)
             if (result.modifiedCount == 1)
                 return response.status(201).json({ success: "Updated Successfolly" });
             else
                 return response.status(201).json({ success: "Not Updated" });
         }).catch(err => {
-            console.log(err);
             return response.status(500).json({ message: "Internal Server Error..." })
         })
 }
 
 exports.verifyAccountPage = (request, response) => {
     return response.status(200).render("verify-account.ejs", {
-        // gardenerId: request.params.id,
         apiUrl: "http://localhost:3000/gardener/get-verified-account/" + request.params.id
     });
-    // return response.status(200).send(alert("Congratulations your account is verified now you can login"))
 }
 
 exports.getVerifiedAccount = (request, response) => {
-    console.log(request.params.id)
 
     Gardener.updateOne({ _id: request.params.id }, {
             $set: {
@@ -155,8 +155,6 @@ exports.getVerifiedAccount = (request, response) => {
         .catch(err => {
             return response.status(500).json({ error: "Internal Server Error..." })
         });
-
-    // return response.status(200).send(alert("Congratulations your account is verified now you can login"))
 }
 
 exports.forgotPassword = (request, response) => {
@@ -201,7 +199,6 @@ exports.forgotPassword = (request, response) => {
             return response.status(200).json({ message: "No User Found With This Email Address" })
         }
     }).catch(err => {
-        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
@@ -214,11 +211,9 @@ exports.gardenerList = (request, response) => {
         if (result.length > 0) {
             return response.status(201).json(result)
         } else {
-            console.log(result)
-            return response.status(500).json({ message: "Result Not Found" })
+            return response.status(201).json({ message: "Result Not Found" })
         }
     }).catch(err => {
-        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
@@ -326,4 +321,46 @@ exports.unBlockGardener = (request, response) => {
         .catch(err => {
             return response.status(500).json({ error: "oops something went wrong" })
         });
+}
+
+exports.rateTheGardener = async(request, response) => {
+
+    let gardener = await Gardener.findOne({ _id: request.body.gardenerId })
+
+    if (!gardener) {
+        return response.status(200).json({ message: "This Gardener Dosen't Exist Now" })
+    }
+    let flag = false;
+
+    for (let item of gardener.gardenerRating) {
+        if (item.userId == request.body.userId) {
+            let update = await Gardener.updateOne({
+                _id: request.body.gardenerId,
+                "gardenerRating.userId": request.body.userId,
+            }, { $set: { "gardenerRating.$.rate": request.body.rate, "gardenerRating.$.review": request.body.review } });
+
+            if (update.modifiedCount == 1) {
+                flag = true;
+                return response.status(200).json({ success: "Success" });
+            } else {
+                return response.status(200).json({ failed: "Not Success" });
+            }
+        }
+    }
+    if (!flag) {
+        gardener.gardenerRating.push({
+            userId: request.body.userId,
+            rate: request.body.rate,
+            review: request.body.review
+        });
+        gardener.save().then(result => {
+            if (result)
+                return response.status(200).json({ data: result, succes: "Rated Successfully" })
+            else
+                return response.status(200).json({ data: result, failed: "Not Rated Successfully" })
+        }).catch(err => {
+            return response.status(500).json({ error: "oops something went wrong" })
+        })
+    }
+
 }

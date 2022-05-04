@@ -4,6 +4,10 @@ const requests = require("request");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const { response } = require("express");
+const crypto = require('crypto');
+
+const key = "prakritee@123@05";
+const algo = "aes-256-cbc"
 
 exports.signup = (request, response) => {
     console.log(request.body);
@@ -11,6 +15,11 @@ exports.signup = (request, response) => {
     if (!error.isEmpty()) {
         return response.status(400).json({ errors: error.array() });
     }
+
+    var cipher = crypto.createCipher(algo, key)
+    var crypted = cipher.update(request.body.nurseryOwnerPassword, 'utf8', 'hex');
+    crypted += cipher.final('hex');
+    request.body.nurseryOwnerPassword = crypted;
 
     NurseryOwner.create(request.body)
         .then(result => {
@@ -39,10 +48,8 @@ exports.signup = (request, response) => {
                     console.log("SUCCESS===================================\n" + info);
                 }
             });
-            console.log(result)
             return response.status(201).json(result)
         }).catch(err => {
-            console.log(err);
             return response.status(500).json({ message: "Internal Server Error..." })
         })
 }
@@ -55,21 +62,25 @@ exports.signin = (request, response) => {
 
     NurseryOwner.findOne({
         nurseryOwnerEmail: request.body.nurseryOwnerEmail,
-        nurseryOwnerPassword: request.body.nurseryOwnerPassword,
         isVerify: true,
         isBlock: false
     }).then(result => {
         if (result) {
-            let payload = { subject: result._id };
-            let token = jwt.sign(payload, "giugifsyjhsadgjbjfbbdsfjbjbk");
+            var decipher = crypto.createDecipher(algo, key)
+            var dec = decipher.update(result.nurseryOwnerPassword, 'hex', 'utf8')
+            dec += decipher.final('utf8');
 
-            return response.status(201).json({ status: "login success", data: result, token: token })
+            if (dec == request.body.nurseryOwnerPassword) {
+                let payload = { subject: result._id };
+                let token = jwt.sign(payload, "giugifsyjhsadgjbjfbbdsfjbjbk");
+
+                return response.status(201).json({ status: "login success", data: result, token: token })
+            } else
+                return response.status(201).json({ message: "Invalid Email And Password" })
         } else {
-            console.log(result)
-            return response.status(500).json({ failed: "login failed" })
+            return response.status(201).json({ failed: "login failed" })
         }
     }).catch(err => {
-        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
@@ -78,7 +89,6 @@ exports.signinWithGoogle = (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty())
         return response.status(400).json({ errors: errors.array() });
-    console.log(request.body)
 
     NurseryOwner.findOne({
         nurseryOwnerEmail: request.body.nurseryOwnerEmail,
@@ -92,16 +102,14 @@ exports.signinWithGoogle = (request, response) => {
             return response.status(201).json({ status: "login success", data: result, token: token })
         } else {
             console.log(result)
-            return response.status(500).json({ failed: "login failed" })
+            return response.status(201).json({ failed: "login failed" })
         }
     }).catch(err => {
-        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
 
 exports.updateProfile = (request, response) => {
-    console.log(request.body);
 
     const error = validationResult(request);
     if (!error.isEmpty()) {
@@ -118,7 +126,6 @@ exports.updateProfile = (request, response) => {
             $set: request.body
         })
         .then(result => {
-            console.log(result)
             if (result.modifiedCount == 1)
                 return response.status(201).json({ success: "Updated Successfolly" });
             else
@@ -131,14 +138,11 @@ exports.updateProfile = (request, response) => {
 
 exports.verifyAccountPage = (request, response) => {
     return response.status(200).render("verify-account.ejs", {
-        // gardenerId: request.params.id,
         apiUrl: "http://localhost:3000/nurseryowner/get-verified-account/" + request.params.id
     });
-    // return response.status(200).send(alert("Congratulations your account is verified now you can login"))
 }
 
 exports.getVerifiedAccount = (request, response) => {
-    console.log(request.params.id)
 
     NurseryOwner.updateOne({ _id: request.params.id }, {
             $set: {
@@ -155,7 +159,6 @@ exports.getVerifiedAccount = (request, response) => {
             return response.status(500).json({ error: "Internal Server Error..." })
         });
 
-    // return response.status(200).send(alert("Congratulations your account is verified now you can login"))
 }
 
 exports.forgotPassword = (request, response) => {
@@ -200,7 +203,6 @@ exports.forgotPassword = (request, response) => {
             return response.status(200).json({ message: "No User Found With This Email Address" })
         }
     }).catch(err => {
-        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
@@ -214,10 +216,9 @@ exports.nurseryList = (request, response) => {
             return response.status(201).json(result)
         } else {
             console.log(result)
-            return response.status(500).json({ message: "Result Not Found" })
+            return response.status(201).json({ message: "Result Not Found" })
         }
     }).catch(err => {
-        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
@@ -259,7 +260,7 @@ exports.blockNursery = (request, response) => {
                             }
                         });
 
-                        return response.status(200).json({ success: "Successfully Blocked Nursery Owner" });
+                        return response.status(201).json({ success: "Successfully Blocked Nursery Owner" });
                     } else
                         return response.status(201).json({ message: "Blocked But Notification Not Sent.." });
 

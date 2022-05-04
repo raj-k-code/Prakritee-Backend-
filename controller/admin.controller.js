@@ -16,18 +16,16 @@ exports.signin = (request, response) => {
     Admin.findOne(request.body)
         .then(result => {
             if (result)
-                return response.status(500).json(result);
+                return response.status(200).json(result);
             else
-                return response.status(500).json({ message: "Login Failed..." });
+                return response.status(200).json({ message: "Login Failed..." });
         })
         .catch(err => {
-            console.log(err);
             return response.status(500).json({ error: "Internal server error.." });
         });
 }
 
 exports.addCategory = (request, response) => {
-    console.log(request.body)
     const error = validationResult(request);
     if (!error.isEmpty()) {
         return response.status(400).json({ errors: error.array() });
@@ -38,10 +36,9 @@ exports.addCategory = (request, response) => {
             categoryImage: "https://firebasestorage.googleapis.com/v0/b/productdb-eaa0c.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
         })
         .then(result => {
-            return response.status(500).json(result);
+            return response.status(200).json(result);
         })
         .catch(err => {
-            console.log(err);
             return response.status(500).json({ error: "Internal server error.." });
         });
 }
@@ -60,7 +57,7 @@ exports.deleteCategory = (request, response, next) => {
 
         })
         .catch(err => {
-            return response.status(201).json({ error: "Internal Server Error......." });
+            return response.status(500).json({ error: "Internal Server Error......." });
         });
 }
 
@@ -69,12 +66,11 @@ exports.categoryList = (request, response) => {
     Category.find()
         .then(result => {
             if (result)
-                return response.status(500).json(result);
+                return response.status(200).json(result);
             else
-                return response.status(500).json({ message: "Result Not Found..." });
+                return response.status(200).json({ message: "Result Not Found..." });
         })
         .catch(err => {
-            console.log(err);
             return response.status(500).json({ error: "Internal server error.." });
         });
 }
@@ -107,7 +103,6 @@ exports.editCategory = (request, response) => {
                 return response.status(201).json({ error: "Not Updated.." });
         })
         .catch(err => {
-            console.log(err);
             return response.status(500).json({ error: "Internal server error.." });
         });
 }
@@ -118,11 +113,9 @@ exports.gardenerList = (request, response) => {
         if (result.length > 0) {
             return response.status(201).json(result)
         } else {
-            console.log(result)
-            return response.status(500).json({ message: "Result Not Found" })
+            return response.status(201).json({ message: "Result Not Found" })
         }
     }).catch(err => {
-        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
@@ -132,11 +125,9 @@ exports.nurseryList = (request, response) => {
         if (result.length > 0) {
             return response.status(201).json(result)
         } else {
-            console.log(result)
-            return response.status(500).json({ message: "Result Not Found" })
+            return response.status(201).json({ message: "Result Not Found" })
         }
     }).catch(err => {
-        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
@@ -146,11 +137,9 @@ exports.userList = (request, response) => {
         if (result.length > 0) {
             return response.status(201).json(result)
         } else {
-            console.log(result)
-            return response.status(500).json({ message: "Result Not Found" })
+            return response.status(201).json({ message: "Result Not Found" })
         }
     }).catch(err => {
-        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }

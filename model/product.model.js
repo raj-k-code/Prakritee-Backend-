@@ -30,6 +30,10 @@ const productSchema = new mongoose.Schema({
             type: Number,
             required: true,
             min: 1
+        },
+        date: {
+            type: Date,
+            default: new Date().now
         }
     }],
     productImage: {

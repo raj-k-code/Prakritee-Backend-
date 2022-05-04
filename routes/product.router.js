@@ -6,6 +6,7 @@ const firebase = require("../middleware/firebase.middleware");
 const token = require("../middleware/token.middleware");
 
 const multer = require("multer");
+const { route } = require("./admin.router");
 var storage = multer.diskStorage({
     destination: "public/images",
     filename: function(req, file, cb) {
@@ -25,5 +26,34 @@ router.post("/add-product", upload.single('productImage'),
     firebase.fireBaseStorage,
     productController.addProduct
 );
+
+router.post("/delete-product", body('productId').notEmpty(), productController.delete)
+
+router.get("/product-list", productController.productList);
+
+router.post("/edit-product", upload.single('productImage'),
+    body('productName').notEmpty(),
+    body('categoryName').notEmpty(),
+    body('productPrice').isNumeric().notEmpty(),
+    body('productDescription').notEmpty(),
+    body('productId').notEmpty(),
+    body('oldImage').notEmpty(),
+    firebase.fireBaseStorage,
+
+    productController.edit);
+
+
+router.get("/product-search/:searchText", productController.searchProduct);
+
+router.post("/product-list-similar", productController.productListSimilar);
+
+router.get("/product-list-category/:name", productController.productListByCategory);
+
+router.post("/product-list-by-nurseryowner", token.verifyToken, productController.productListByNurseryOwner);
+
+router.get("/product-by-id/:productId", token.verifyToken, productController.productById);
+
+router.post("/rate-the-product", productController.rateTheProduct);
+
 
 module.exports = router;

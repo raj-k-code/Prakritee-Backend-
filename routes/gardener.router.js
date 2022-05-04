@@ -58,8 +58,10 @@ router.get("/get-verified-account/:id", gardenerController.getVerifiedAccount);
 
 router.post("/forgot-password", gardenerController.forgotPassword);
 
-router.post("/block-gardener", gardenerController.blockGardener)
+router.post("/block-gardener", gardenerController.blockGardener);
 
 router.post("/unblock-gardener", gardenerController.unBlockGardener)
+
+router.post("/rate-the-gardener", gardenerController.rateTheGardener);
 
 module.exports = router;

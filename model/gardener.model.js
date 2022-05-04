@@ -47,6 +47,10 @@ const gardenerSchema = new mongoose.Schema({
         rate: {
             type: Number,
             min: 1
+        },
+        review: {
+            type: String,
+            required: true
         }
     }],
     isVerify: {
