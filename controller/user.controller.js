@@ -4,6 +4,10 @@ const requests = require("request");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const { response } = require("express");
+const crypto = require('crypto');
+
+const key = "prakritee@123@05";
+const algo = "aes-256-cbc"
 
 exports.signup = (request, response) => {
     console.log(request.body);
@@ -11,6 +15,12 @@ exports.signup = (request, response) => {
     if (!error.isEmpty()) {
         return response.status(400).json({ errors: error.array() });
     }
+
+    var cipher = crypto.createCipher(algo, key)
+    var crypted = cipher.update(request.body.userPassword, 'utf8', 'hex');
+    crypted += cipher.final('hex');
+
+    request.body.userPassword = crypted;
 
     User.create(request.body)
         .then(result => {
@@ -39,7 +49,6 @@ exports.signup = (request, response) => {
                     console.log("SUCCESS===================================\n" + info);
                 }
             });
-            console.log(result)
             return response.status(201).json(result)
         }).catch(err => {
             console.log(err);
@@ -51,25 +60,28 @@ exports.signin = (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty())
         return response.status(400).json({ errors: errors.array() });
-    console.log(request.body)
 
     User.findOne({
         userEmail: request.body.userEmail,
-        userPassword: request.body.userPassword,
         isVerify: true,
         isBlock: false
     }).then(result => {
         if (result) {
-            let payload = { subject: result._id };
-            let token = jwt.sign(payload, "giugifsyjhsadgjbjfbbdsfjbjbk");
+            var decipher = crypto.createDecipher(algo, key)
+            var dec = decipher.update(result.userPassword, 'hex', 'utf8')
+            dec += decipher.final('utf8');
 
-            return response.status(201).json({ status: "login success", data: result, token: token })
+            if (dec == request.body.userPassword) {
+                let payload = { subject: result._id };
+                let token = jwt.sign(payload, "giugifsyjhsadgjbjfbbdsfjbjbk");
+
+                return response.status(201).json({ status: "login success", data: result, token: token })
+            } else
+                return response.status(201).json({ message: "Invalid Email And Password" })
         } else {
-            console.log(result)
-            return response.status(500).json({ failed: "login failed" })
+            return response.status(201).json({ failed: "login failed" })
         }
     }).catch(err => {
-        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
@@ -78,7 +90,6 @@ exports.signinWithGoogle = (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty())
         return response.status(400).json({ errors: errors.array() });
-    console.log(request.body)
 
     User.findOne({
         userEmail: request.body.userEmail,
@@ -91,11 +102,9 @@ exports.signinWithGoogle = (request, response) => {
 
             return response.status(201).json({ status: "login success", data: result, token: token })
         } else {
-            console.log(result)
-            return response.status(500).json({ failed: "login failed" })
+            return response.status(201).json({ failed: "login failed" })
         }
     }).catch(err => {
-        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
@@ -117,28 +126,22 @@ exports.updateProfile = (request, response) => {
             $set: request.body
         })
         .then(result => {
-            console.log(result)
             if (result.modifiedCount == 1)
                 return response.status(201).json({ success: "Updated Successfully" });
             else
                 return response.status(201).json({ success: "Not Updated" });
         }).catch(err => {
-            console.log(err);
             return response.status(500).json({ message: "Internal Server Error..." })
         })
 }
 
 exports.verifyAccountPage = (request, response) => {
     return response.status(200).render("verify-account.ejs", {
-        // gardenerId: request.params.id,
         apiUrl: "http://localhost:3000/user/get-verified-account/" + request.params.id
     });
-    // return response.status(200).send(alert("Congratulations your account is verified now you can login"))
 }
 
 exports.getVerifiedAccount = (request, response) => {
-    console.log(request.params.id)
-
     User.updateOne({ _id: request.params.id }, {
             $set: {
                 isVerify: true
@@ -153,15 +156,12 @@ exports.getVerifiedAccount = (request, response) => {
         .catch(err => {
             return response.status(500).json({ error: "Internal Server Error..." })
         });
-
-    // return response.status(200).send(alert("Congratulations your account is verified now you can login"))
 }
 
 exports.forgotPassword = (request, response) => {
     User.findOne({
         userEmail: request.body.userEmail
     }).then(result => {
-        console.log(result);
         if (result) {
             let transporter = nodemailer.createTransport({
                 host: "smtp.gmail.com",
@@ -212,11 +212,9 @@ exports.userList = (request, response) => {
         if (result.length > 0) {
             return response.status(201).json(result)
         } else {
-            console.log(result)
-            return response.status(500).json({ message: "Result Not Found" })
+            return response.status(201).json({ message: "Result Not Found" })
         }
     }).catch(err => {
-        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
