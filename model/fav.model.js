@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { boolean } = require("webidl-conversions");
 const Schema = mongoose.Schema;
 
-const cartSchema = new mongoose.Schema({
+const favSchema = new mongoose.Schema({
     userId: {
         type: Schema.Types.ObjectId,
         ref: "user"
@@ -21,4 +21,4 @@ const cartSchema = new mongoose.Schema({
 
 });
 
-module.exports = mongoose.model("cart", cartSchema);
+module.exports = mongoose.model("fav", favSchema);
