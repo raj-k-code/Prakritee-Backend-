@@ -65,10 +65,10 @@ exports.categoryList = (request, response) => {
 
     Category.find()
         .then(result => {
-            if (result)
+            if (result.length > 0)
                 return response.status(200).json(result);
             else
-                return response.status(200).json({ message: "Result Not Found..." });
+                return response.status(401).json({ message: "Result Not Found..." });
         })
         .catch(err => {
             return response.status(500).json({ error: "Internal server error.." });
