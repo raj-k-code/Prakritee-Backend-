@@ -22,6 +22,8 @@ exports.signup = (request, response) => {
     crypted += cipher.final('hex');
     request.body.gardenerPassword = crypted;
 
+    delete request.body.gardenerImage;
+
     Gardener.create(request.body)
         .then(result => {
             let transporter = nodemailer.createTransport({
@@ -76,9 +78,9 @@ exports.signin = (request, response) => {
 
                 return response.status(201).json({ status: "login success", data: result, token: token })
             } else
-                return response.status(201).json({ message: "Invalid Email And Password" })
+                return response.status(401).json({ message: "Invalid Email And Password" })
         } else {
-            return response.status(201).json({ failed: "login failed" })
+            return response.status(401).json({ failed: "login failed" })
         }
     }).catch(err => {
         return response.status(500).json({ error: "oops something went wrong" })

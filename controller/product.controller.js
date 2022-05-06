@@ -41,7 +41,10 @@ exports.delete = (request, response, next) => {
 exports.productList = (request, response, next) => {
     Product.find()
         .then(result => {
-            return response.status(201).json(result);
+            if (result.length > 0)
+                return response.status(201).json(result);
+            else
+                return response.status(401).json({ message: "No Product Found..." });
         })
         .catch(err => {
             return response.status(500).json({ error: "Internal Server Error......." });
