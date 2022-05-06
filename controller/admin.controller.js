@@ -75,6 +75,20 @@ exports.categoryList = (request, response) => {
         });
 }
 
+
+exports.categoryById = (request, response) => {
+    Category.findOne({ _id: request.params.id })
+        .then(result => {
+            if (result)
+                return response.status(200).json(result);
+            else
+                return response.status(401).json({ message: "Result Not Found..." });
+        })
+        .catch(err => {
+            return response.status(500).json({ error: "Internal server error.." });
+        });
+}
+
 exports.editCategory = (request, response) => {
     const error = validationResult(request);
     if (!error.isEmpty()) {
@@ -103,6 +117,7 @@ exports.editCategory = (request, response) => {
                 return response.status(201).json({ error: "Not Updated.." });
         })
         .catch(err => {
+            console.log(err);
             return response.status(500).json({ error: "Internal server error.." });
         });
 }

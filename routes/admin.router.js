@@ -47,6 +47,8 @@ router.get('/gardener/gardener-list',
     adminController.gardenerList
 );
 
+router.get("/category-by-id/:id", adminController.categoryById);
+
 router.get("/nursery/nursery-list", adminController.nurseryList);
 
 router.get("/user/user-list", adminController.userList);

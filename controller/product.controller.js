@@ -91,7 +91,7 @@ exports.edit = (request, response, next) => {
 }
 
 exports.searchProduct = (request, response, next) => {
-    var regex = new RegExp(request.params.searchText + "", 'i');
+    var regex = new RegExp(request.body.searchText, 'i');
     Product.find({
             $or: [
                 { productName: regex },
@@ -137,7 +137,7 @@ exports.productListByCategory = (request, response, next) => {
 
                 return response.status(201).json(result);
             else
-                return response.status(201).json({ message: "Result Not Found......." });
+                return response.status(401).json({ message: "Result Not Found......." });
         })
         .catch(err => {
             return response.status(500).json({ error: "Internal Server Error......." });

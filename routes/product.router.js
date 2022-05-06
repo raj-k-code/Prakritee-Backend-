@@ -43,7 +43,7 @@ router.post("/edit-product", upload.single('productImage'),
     productController.edit);
 
 
-router.get("/product-search/:searchText", productController.searchProduct);
+router.post("/product-search", productController.searchProduct);
 
 router.post("/product-list-similar", productController.productListSimilar);
 
@@ -51,7 +51,7 @@ router.get("/product-list-category/:name", productController.productListByCatego
 
 router.post("/product-list-by-nurseryowner", token.verifyToken, productController.productListByNurseryOwner);
 
-router.get("/product-by-id/:productId", token.verifyToken, productController.productById);
+router.get("/product-by-id/:productId", productController.productById);
 
 router.post("/rate-the-product", productController.rateTheProduct);
 
