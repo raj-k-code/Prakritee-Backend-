@@ -37,6 +37,8 @@ router.post("/signin-with-google",
     userController.signinWithGoogle
 );
 
+router.get("/view/:id", userController.view);
+
 router.post("/edit", token.verifyToken, upload.single("userImage"),
     body("userName").notEmpty(),
     body("userEmail").notEmpty().isEmail(),
