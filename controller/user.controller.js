@@ -109,6 +109,18 @@ exports.signinWithGoogle = (request, response) => {
     })
 }
 
+exports.view = (req, res) => {
+    User 
+      .findOne()
+      .then((result) => {
+        return res.status(200).json(result);
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.status(500).json({ message: "something went wrong" });
+      });
+  };
+
 exports.updateProfile = (request, response) => {
     console.log(request.body);
     const error = validationResult(request);
