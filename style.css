@@ -1,0 +1,119 @@
+*{
+    margin: 0%;
+    padding: 0%;
+}
+.hero-section{
+    
+    /* width: 1000px;  */
+    /* text-align: center;  */
+    /* margin-left: 150px; */
+   /* box-shadow: #070707;
+  
+   /* padding-right: 0px;  */
+   padding-left: 0px;
+   height: 100x; 
+   -webkit-box-shadow: 1px 3px 10px 4px rgba(0, 0, 0, 1.56); 
+box-shadow: 1px 3px 10px 4px rgba(0,0,0,0.56);
+}
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    text-align: center;
+    size: 100px;
+    font-size: xx-large;
+    font-weight:bold;
+    font-style: italic;
+    
+  }
+
+.container{
+    margin-top: 100px;
+}
+
+
+
+ .contact-information{
+    margin-top: 50px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+     }
+
+.section-heading h2{
+    margin-top: 30px;
+    font-size: 30px;
+    margin-left: 50px;
+}
+
+
+.contact-information p{
+    padding: 5px;
+}
+.map-area {
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.15); }
+    .map-area iframe {
+      width: 100%;
+      height: 400px;
+      border: none;
+      margin-bottom: 0;
+      border-radius: 5px; }
+      @media only screen and (max-width: 767px) {
+        .map-area iframe {
+          height: 320px; } }
+          
+.contact-form-area .form-control {
+    position: relative;
+    z-index: 2;
+    height: 45px;
+    width: 100%;
+    background-color: #ffffff;
+    font-size: 16px;
+    margin-bottom: 15px;
+    border: 1px solid #e1e1e1;
+    border-radius: 2px;
+    padding: 15px 20px;
+    font-weight: 400;
+    color: #b7b7b7;
+    -webkit-transition-duration: 500ms;
+    transition-duration: 500ms; }
+    .contact-form-area .form-control:focus {
+      box-shadow: none;
+      border-color: #70c745; }
+  .contact-form-area textarea.form-control {
+    height: 80px; }
+
+    .hero-section h1{
+        text-align: center;
+        text-emphasis-color: white;
+    }
+    .contact-form-area .alazea-btn{
+        box-shadow: none;
+        border-color: #70c745;
+    }
+    .contact-form-area .alazea-btn:hover{
+        box-shadow:0 5px 50px 0 #70c745 inset, 0 5px 50px 0 #70c745,
+                 0 5px 50px 0 #70c745 inset, 0 5px 50px 0 #70c745;
+        text-shadow: 0 0 5px #70c745,0 0 5px #70c745;
+        color: #ffffff;
+    }
+    
+   
+        .section-detail p {
+            font-size: 16px;
+            color: #857f7f;
+            margin-bottom: 0; 
+            margin-left: 50px;
+        } 
+        
+    .contact--thumbnail img{
+        height: 400px;
+        box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.15);
+    }
+
+
+ 
+    
