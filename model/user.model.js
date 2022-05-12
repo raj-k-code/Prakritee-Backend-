@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
     },
     userJoinDate: {
         type: Date,
-        default: new Date().now
+        default: Date.now
     },
     isVerify: {
         type: Boolean,

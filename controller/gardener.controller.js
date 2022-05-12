@@ -165,6 +165,11 @@ exports.forgotPassword = (request, response) => {
     }).then(result => {
         console.log(result);
         if (result) {
+            var decipher = crypto.createDecipher(algo, key)
+            var dec = decipher.update(result.gardenerPassword, 'hex', 'utf8')
+            dec += decipher.final('utf8');
+            result.gardenerPassword = dec;
+
             let transporter = nodemailer.createTransport({
                 host: "smtp.gmail.com",
                 port: 587,
