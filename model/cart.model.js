@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { boolean } = require("webidl-conversions");
 const Schema = mongoose.Schema;
 
 const cartSchema = new mongoose.Schema({
@@ -8,15 +7,12 @@ const cartSchema = new mongoose.Schema({
         ref: "user"
     },
     productList: [{
-        productId: {
-            type: Schema.Types.ObjectId,
-            ref: "product",
-            unique:true
-        }
+        type: Schema.Types.ObjectId,
+        ref: "product"
     }],
     createdAt: {
         type: Date,
-        default: new Date().now
+        default: Date.now
     },
 
 });

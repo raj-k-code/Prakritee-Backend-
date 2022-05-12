@@ -33,7 +33,7 @@ const gardenerSchema = new mongoose.Schema({
     },
     gardenerJoinDate: {
         type: Date,
-        default: new Date().now
+        default: Date.now
     },
     gardenerExperience: {
         type: String,

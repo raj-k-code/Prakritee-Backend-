@@ -190,9 +190,9 @@ exports.rateTheProduct = async(request, response) => {
 
             if (hello.modifiedCount == 1) {
                 flag = true;
-                return response.status(200).json({ message: "Success" });
+                return response.status(200).json({ succes: "Success" });
             } else {
-                return response.status(200).json({ message: "Not Success" });
+                return response.status(200).json({ failed: "Not Success" });
             }
         }
     }
@@ -206,7 +206,7 @@ exports.rateTheProduct = async(request, response) => {
             if (result)
                 return response.status(200).json({ data: result, succes: "Rated Successfully" })
             else
-                return response.status(200).json({ data: result, succes: "Not Rated Successfully" })
+                return response.status(200).json({ data: result, failed: "Not Rated Successfully" })
         }).catch(err => {
             console.log(err);
             return response.status(500).json({ error: "oops something went wrong" })
