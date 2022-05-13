@@ -64,4 +64,12 @@ router.post("/unblock-gardener", gardenerController.unBlockGardener)
 
 router.post("/rate-the-gardener", gardenerController.rateTheGardener);
 
+router.post("/book-gardener", gardenerController.bookTheGardener);
+
+router.post("/approve-request", gardenerController.approveRequest);
+
+router.post("/cancel-request", gardenerController.cancelRequest);
+
+router.post("/view-request", gardenerController.viewRequest);
+
 module.exports = router;

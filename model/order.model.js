@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { boolean } = require("webidl-conversions");
 const Schema = mongoose.Schema;
 
 const orderSchema = new mongoose.Schema({
@@ -42,6 +41,10 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    paymentMethod: {
+        type: String,
+        default: "Online Payment"
+    }
 
 });
 
