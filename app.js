@@ -9,7 +9,9 @@ const productRouter = require("./routes/product.router");
 const nurseryownerRouter = require("./routes/nurseryowner.router");
 const userRouter = require("./routes/user.router");
 const cartRouter = require("./routes/cart.router");
-const favRouter = require("./routes/fav.router")
+const favRouter = require("./routes/fav.router");
+const orderRouter = require("./routes/order.router");
+const blogRouter = require('./routes/blogs.router');
 const ejs = require("ejs");
 
 const app = express();
@@ -42,7 +44,9 @@ app.use("/product", productRouter);
 app.use("/nurseryowner", nurseryownerRouter);
 app.use("/user", userRouter);
 app.use("/cart", cartRouter);
-app.use("/fav", favRouter)
+app.use("/fav", favRouter);
+app.use("/order", orderRouter);
+app.use('/blog', blogRouter);
 
 app.listen(port, () => {
     console.log("-----------SERVER IS STARTED-----------");

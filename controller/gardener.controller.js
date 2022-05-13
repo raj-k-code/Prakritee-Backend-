@@ -7,6 +7,8 @@ const jwt = require("jsonwebtoken");
 const alert = require('alert');
 const { response } = require("express");
 const crypto = require('crypto');
+const Booking = require('../model/booking.model');
+const User = require('../model/user.model');
 
 const key = "prakritee@123@05";
 const algo = "aes-256-cbc"
@@ -370,4 +372,247 @@ exports.rateTheGardener = async(request, response) => {
         })
     }
 
+}
+
+exports.bookTheGardener = async(request, response) => {
+    let booking = await Booking.findOne({ gardenerId: request.body.gardenerId });
+
+    if (booking) {
+        for (i in booking.bookRequests) {
+            if (booking.bookRequests[i].userId == request.body.userId)
+                return response.status(200).json({ message: 'Already Requested This Gardener' });
+        }
+
+
+        await booking.bookRequests.push({ userId: request.body.userId });
+        booking.save()
+            .then(result => {
+                console.log(result);
+
+                Gardener.findOne({ _id: request.body.gardenerId }).then(gardener => {
+                    if (gardener) {
+                        let transporter = nodemailer.createTransport({
+                            host: "smtp.gmail.com",
+                            port: 587,
+                            secure: false,
+                            requireTLS: true,
+                            auth: {
+                                user: "bidauction23@gmail.com",
+                                pass: "brainforcode",
+                            },
+                        });
+
+                        var message = {
+                            from: "bidauction23@gmail.com",
+                            to: gardener.gardenerEmail,
+                            subject: "🎉 New Request 🎉",
+                            html: '<p>We Have Find A New Work Opportunity For You.Please Go To Our Website to Responsed</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+                        };
+
+                        transporter.sendMail(message, (err, info) => {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log("SUCCESS===================================\n" + info);
+                            }
+                        });
+
+                        return response.status(200).json({ success: "Request Sent" });
+                    } else
+                        return response.status(201).json({ failed: "Request Sent But Notification didin't" });
+
+
+                }).catch(err => {
+                    return response.status(500).json({ error: "oops something went wrong" })
+                })
+            })
+            .catch(err => {
+                console.log(err);
+                return response.status(500).json({ error: 'Internal Server Error' });
+            });
+    } else {
+
+        let newBooking = await new Booking();
+        newBooking.gardenerId = await request.body.gardenerId;
+
+        await newBooking.bookRequests.push({ userId: request.body.userId });
+
+        newBooking.save()
+            .then(result => {
+                console.log(result);
+
+                Gardener.findOne({ _id: request.body.gardenerId }).then(gardener => {
+                    if (gardener) {
+                        let transporter = nodemailer.createTransport({
+                            host: "smtp.gmail.com",
+                            port: 587,
+                            secure: false,
+                            requireTLS: true,
+                            auth: {
+                                user: "bidauction23@gmail.com",
+                                pass: "brainforcode",
+                            },
+                        });
+
+                        var message = {
+                            from: "bidauction23@gmail.com",
+                            to: gardener.gardenerEmail,
+                            subject: "🎉 New Request 🎉",
+                            html: '<p>We Have Find A New Work Opportunity For You.Please Go To Our Website to Responsed</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+                        };
+
+                        transporter.sendMail(message, (err, info) => {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log("SUCCESS===================================\n" + info);
+                            }
+                        });
+
+                        return response.status(200).json({ success: "Request Sent" });
+                    } else
+                        return response.status(201).json({ failed: "Request Sent But Notification didin't" });
+
+
+                }).catch(err => {
+                    return response.status(500).json({ error: "oops something went wrong" })
+                })
+            })
+            .catch(err => {
+                console.log(err);
+                return response.status(500).json({ error: 'Internal Server Error' });
+            });
+    }
+}
+
+exports.approveRequest = (request, response) => {
+    Booking.updateOne({ gardenerId: request.body.gardenerId, "bookRequests.userId": request.body.userId }, {
+            $set: {
+                "bookRequests.$.isApproved": true
+            }
+        })
+        .then(result => {
+            console.log(result);
+            if (result.modifiedCount == 1) {
+
+                User.findOne({ _id: request.body.userId }).then(user => {
+                    if (user) {
+                        let transporter = nodemailer.createTransport({
+                            host: "smtp.gmail.com",
+                            port: 587,
+                            secure: false,
+                            requireTLS: true,
+                            auth: {
+                                user: "bidauction23@gmail.com",
+                                pass: "brainforcode",
+                            },
+                        });
+
+                        var message = {
+                            from: "bidauction23@gmail.com",
+                            to: user.userEmail,
+                            subject: "🎉 Approval 🎉",
+                            html: '<p>Your request is approved by the Gardener.Please go to our website to contact him quickly</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+                        };
+
+                        transporter.sendMail(message, (err, info) => {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log("SUCCESS===================================\n" + info);
+                            }
+                        });
+
+                        return response.status(200).json({ success: "Response Sent" });
+                    } else
+                        return response.status(201).json({ failed: "Response Sent But Notification didin't" });
+
+
+                }).catch(err => {
+                    return response.status(500).json({ error: "oops something went wrong" })
+                })
+            } else {
+                return response.status(200).json({ failed: "Not Approved" });
+            }
+        }).catch(err => {
+            console.log(err);
+            return response.status(500).json({ error: "Internal Server Error" });
+        });
+}
+
+exports.cancelRequest = (request, response) => {
+    Booking.updateOne({ gardenerId: request.body.gardenerId, "bookRequests.userId": request.body.userId }, {
+            $set: {
+                "bookRequests.$.isApproved": false
+            }
+        })
+        .then(result => {
+            console.log(result);
+            if (result.modifiedCount == 1) {
+
+                Booking.updateOne({ gardenerId: request.body.gardenerId }, { $pull: { "bookRequests": { userId: request.body.userId } } }, { safe: true, multi: false })
+                    .then(result => {
+                        if (result.modifiedCount == 1) {
+                            User.findOne({ _id: request.body.userId }).then(user => {
+                                if (user) {
+                                    let transporter = nodemailer.createTransport({
+                                        host: "smtp.gmail.com",
+                                        port: 587,
+                                        secure: false,
+                                        requireTLS: true,
+                                        auth: {
+                                            user: "bidauction23@gmail.com",
+                                            pass: "brainforcode",
+                                        },
+                                    });
+
+                                    var message = {
+                                        from: "bidauction23@gmail.com",
+                                        to: user.userEmail,
+                                        subject: " Rejected ",
+                                        html: '<p>Your request is rejected by the Gardener.Please go to our website to see more gardeners</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+                                    };
+
+                                    transporter.sendMail(message, (err, info) => {
+                                        if (err) {
+                                            console.log(err);
+                                        } else {
+                                            console.log("SUCCESS===================================\n" + info);
+                                        }
+                                    });
+
+                                    return response.status(200).json({ success: "Response Sent" });
+                                } else
+                                    return response.status(201).json({ failed: "Response Sent But Notification didin't" });
+
+
+                            }).catch(err => {
+                                return response.status(500).json({ error: "oops something went wrong" })
+                            })
+                        } else {
+                            return response.status(200).json({ failed: "No Result Found" });
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                        return response.status(500).json({ message: "Internal Server Error" });
+                    });
+            } else {
+                return response.status(200).json({ failed: "Not Canceled" });
+            }
+        }).catch(err => {
+            console.log(err);
+            return response.status(500).json({ error: "Internal Server Error" });
+        });
+}
+
+exports.viewRequest = (request, response) => {
+    Booking.findOne({ gardenerId: request.body.gardenerId }).populate('bookRequests.userId').populate('gardenerId').then(result => {
+        if (result) {
+            return response.status(201).json(result)
+        } else {
+            return response.status(201).json({ message: "Result Not Found" })
+        }
+    }).catch(err => {
+        return response.status(500).json({ error: "oops something went wrong" })
+    })
 }

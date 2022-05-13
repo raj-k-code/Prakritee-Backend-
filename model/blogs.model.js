@@ -7,6 +7,10 @@ const blogSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    blogSubTitle: {
+        type: String,
+        required: true,
+    },
     blogContent: {
         type: String,
         required: true,
