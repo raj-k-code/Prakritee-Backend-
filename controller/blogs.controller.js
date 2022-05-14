@@ -39,12 +39,12 @@ exports.deleteBlog = (request, response, next) => {
 
 exports.blogList = (request, response) => {
 
-    Blogs.find()
+    Blogs.find().populate('createdBy')
         .then(result => {
             if (result.length > 0)
                 return response.status(200).json(result);
             else
-                return response.status(401).json({ message: "Result Not Found..." });
+                return response.status(200).json({ message: "Result Not Found..." });
         })
         .catch(err => {
             return response.status(500).json({ error: "Internal server error.." });
@@ -53,7 +53,7 @@ exports.blogList = (request, response) => {
 
 
 exports.blogById = (request, response) => {
-    Blogs.findOne({ _id: request.params.id })
+    Blogs.findOne({ _id: request.params.id }).populate('createdBy')
         .then(result => {
             if (result)
                 return response.status(200).json(result);
