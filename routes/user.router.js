@@ -31,18 +31,16 @@ router.post("/signin",
     body("userPassword").notEmpty().isLength(6),
     userController.signin
 );
-// hjllgit
 router.post("/signin-with-google",
     body("userEmail").notEmpty().isEmail(),
     userController.signinWithGoogle
 );
 
-router.get("/view/:id", userController.view);
+router.get("/user-by-id/:userId", userController.userById);
 
 router.post("/edit", token.verifyToken, upload.single("userImage"),
     body("userName").notEmpty(),
     body("userEmail").notEmpty().isEmail(),
-    body("userPassword").notEmpty().isLength(6),
     body("userMobile").notEmpty().isMobilePhone(),
     body("userAddress").notEmpty(),
     body("userId").notEmpty(),
