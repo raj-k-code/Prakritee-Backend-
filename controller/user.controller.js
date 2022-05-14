@@ -109,20 +109,26 @@ exports.signinWithGoogle = (request, response) => {
     })
 }
 
-exports.view = (req, res) => {
-    User 
-      .findOne()
-      .then((result) => {
-        return res.status(200).json(result);
-      })
-      .catch((err) => {
-        console.log(err);
-        return res.status(500).json({ message: "something went wrong" });
-      });
-  };
+exports.userById = (request, response) => {
+    User
+        .findOne({ _id: request.params.userId })
+        .then(result => {
+            if (result) {
+                return response.status(200).json(result);
+            } else {
+                return response.status(200).json({ message: "No Result Found" });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({ error: "something went wrong" });
+        });
+};
 
 exports.updateProfile = (request, response) => {
     console.log(request.body);
+    console.log(request.file.filename)
+
     const error = validationResult(request);
     if (!error.isEmpty()) {
         return response.status(400).json({ errors: error.array() });
@@ -141,8 +147,9 @@ exports.updateProfile = (request, response) => {
             if (result.modifiedCount == 1)
                 return response.status(201).json({ success: "Updated Successfully" });
             else
-                return response.status(201).json({ success: "Not Updated" });
+                return response.status(201).json({ failed: "Not Updated" });
         }).catch(err => {
+            console.log(err)
             return response.status(500).json({ message: "Internal Server Error..." })
         })
 }

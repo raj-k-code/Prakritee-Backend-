@@ -41,7 +41,6 @@ router.post("/signin-with-google",
 router.post("/edit", token.verifyToken, upload.single("gardenerImage"),
     body("gardenerName").notEmpty(),
     body("gardenerEmail").notEmpty().isEmail(),
-    body("gardenerPassword").notEmpty().isLength(6),
     body("gardenerMobile").notEmpty().isMobilePhone(),
     body("gardenerAddress").notEmpty(),
     body("gardenerExperience").notEmpty(),
@@ -71,5 +70,7 @@ router.post("/approve-request", gardenerController.approveRequest);
 router.post("/cancel-request", gardenerController.cancelRequest);
 
 router.post("/view-request", gardenerController.viewRequest);
+
+router.get("/gardner-by-id/:gardenerId", gardenerController.gardenerById);
 
 module.exports = router;

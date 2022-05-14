@@ -113,12 +113,16 @@ exports.signinWithGoogle = (request, response) => {
 }
 
 exports.updateProfile = (request, response) => {
+    console.log(request.file.filename)
+
     const error = validationResult(request);
     if (!error.isEmpty()) {
         return response.status(400).json({ errors: error.array() });
     }
 
     request.body.gardenerImage = "https://firebasestorage.googleapis.com/v0/b/productdb-eaa0c.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
+
+    console.log(request.body.gardenerImage)
 
     Gardener.updateOne({
             _id: request.body.gardenerId,
@@ -131,7 +135,7 @@ exports.updateProfile = (request, response) => {
             if (result.modifiedCount == 1)
                 return response.status(201).json({ success: "Updated Successfolly" });
             else
-                return response.status(201).json({ success: "Not Updated" });
+                return response.status(201).json({ failed: "Not Updated" });
         }).catch(err => {
             return response.status(500).json({ message: "Internal Server Error..." })
         })
@@ -616,3 +620,20 @@ exports.viewRequest = (request, response) => {
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
+
+
+exports.gardenerById = (request, response) => {
+    Gardener
+        .findOne({ _id: request.params.gardenerId }).populate('gardenerRating.userId')
+        .then(result => {
+            if (result) {
+                return response.status(200).json(result);
+            } else {
+                return response.status(200).json({ message: "No Result Found" });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({ error: "something went wrong" });
+        });
+};
