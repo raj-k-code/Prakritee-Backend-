@@ -21,6 +21,12 @@ router.post('/signin',
     adminController.signin
 );
 
+router.post('/signin-with-google',
+    body("email").isEmail().notEmpty(),
+
+    adminController.signinWithGoogle
+);
+
 router.post('/category/add', upload.single('categoryImage'),
     body("categoryName").notEmpty(),
     firebase.fireBaseStorage,
@@ -52,5 +58,8 @@ router.get("/category-by-id/:id", adminController.categoryById);
 router.get("/nursery/nursery-list", adminController.nurseryList);
 
 router.get("/user/user-list", adminController.userList);
+
+router.post("/forgot-password", adminController.forgotPassword);
+
 
 module.exports = router;
