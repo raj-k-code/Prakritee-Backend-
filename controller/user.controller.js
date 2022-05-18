@@ -245,12 +245,15 @@ exports.userList = (request, response) => {
 
 
 exports.blockUser = (request, response) => {
+    console.log(request.body);
     User.updateOne({ _id: request.body.userId }, {
             $set: {
                 isBlock: true
             }
         })
         .then(result => {
+            console.log(result);
+
             if (result.modifiedCount == 1) {
                 User.findOne({ _id: request.body.userId }).then(user => {
                     if (user) {
@@ -282,7 +285,7 @@ exports.blockUser = (request, response) => {
 
                         return response.status(200).json({ success: "Successfully Blocked User" });
                     } else
-                        return response.status(201).json({ message: "Blocked But Notification Not Sent.." });
+                        return response.status(201).json({ failed: "Blocked But Notification Not Sent.." });
 
 
                 }).catch(err => {
@@ -297,12 +300,15 @@ exports.blockUser = (request, response) => {
 }
 
 exports.unBlockUser = (request, response) => {
+    console.log(request.body);
+
     User.updateOne({ _id: request.body.userId }, {
             $set: {
                 isBlock: false
             }
         })
         .then(result => {
+            console.log(result);
             if (result.modifiedCount == 1) {
                 User.findOne({ _id: request.body.userId }).then(user => {
                     if (user) {
@@ -334,7 +340,7 @@ exports.unBlockUser = (request, response) => {
 
                         return response.status(200).json({ success: "Successfully Unblocked User" });
                     } else
-                        return response.status(201).json({ message: "Unblocked But Notification Not Sent.." });
+                        return response.status(201).json({ failed: "Unblocked But Notification Not Sent.." });
 
 
                 }).catch(err => {

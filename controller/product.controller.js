@@ -39,7 +39,8 @@ exports.delete = (request, response, next) => {
 }
 
 exports.productList = (request, response, next) => {
-    Product.find()
+    console.log(Date.now + "=======================");
+    Product.find().sort({ _id: -1 })
         .then(result => {
             if (result.length > 0)
                 return response.status(201).json(result);

@@ -47,6 +47,10 @@ const nurseryOwnerSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    isApproved: {
+        type: Boolean,
+        default: false
+    }
 });
 
 module.exports = mongoose.model("nurseryOwner", nurseryOwnerSchema);

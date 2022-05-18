@@ -52,6 +52,12 @@ router.post("/edit", token.verifyToken, upload.single("Image"),
 
 router.get("/nursery-list", nurseryownerController.nurseryList);
 
+router.get("/nursery-request", nurseryownerController.nurseryRequest);
+
+router.post("/nursery-request-approve", nurseryownerController.nurseryRequestApprove);
+
+router.post("/nursery-request-cancel", nurseryownerController.nurseryRequestCancel);
+
 router.get("/verify-account/:id", nurseryownerController.verifyAccountPage);
 
 router.get("/get-verified-account/:id", nurseryownerController.getVerifiedAccount);

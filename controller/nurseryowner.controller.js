@@ -63,7 +63,8 @@ exports.signin = (request, response) => {
     NurseryOwner.findOne({
         nurseryOwnerEmail: request.body.nurseryOwnerEmail,
         isVerify: true,
-        isBlock: false
+        isBlock: false,
+        isApproved: true
     }).then(result => {
         if (result) {
             var decipher = crypto.createDecipher(algo, key)
@@ -93,7 +94,8 @@ exports.signinWithGoogle = (request, response) => {
     NurseryOwner.findOne({
         nurseryOwnerEmail: request.body.nurseryOwnerEmail,
         isVerify: true,
-        isBlock: false
+        isBlock: false,
+        isApproved: true
     }).then(result => {
         if (result) {
             let payload = { subject: result._id };
@@ -121,7 +123,8 @@ exports.updateProfile = (request, response) => {
     NurseryOwner.updateOne({
             _id: request.body.nurseryownerId,
             isVerify: true,
-            isBlock: false
+            isBlock: false,
+            isApproved: true
         }, {
             $set: request.body
         })
@@ -165,8 +168,14 @@ exports.forgotPassword = (request, response) => {
     NurseryOwner.findOne({
         nurseryOwnerEmail: request.body.nurseryOwnerEmail
     }).then(result => {
-        console.log(result);
         if (result) {
+            var decipher = crypto.createDecipher(algo, key)
+            var dec = decipher.update(result.nurseryOwnerPassword, 'hex', 'utf8')
+            dec += decipher.final('utf8');
+            result.nurseryOwnerPassword = dec;
+
+            console.log(result.nurseryOwnerPassword)
+
             let transporter = nodemailer.createTransport({
                 host: "smtp.gmail.com",
                 port: 587,
@@ -203,14 +212,17 @@ exports.forgotPassword = (request, response) => {
             return response.status(200).json({ message: "No User Found With This Email Address" })
         }
     }).catch(err => {
+        console.log(err);
         return response.status(500).json({ error: "oops something went wrong" })
     })
 }
 
+
 exports.nurseryList = (request, response) => {
     NurseryOwner.find({
         isVerify: true,
-        isBlock: false
+        isBlock: false,
+        isApproved: true
     }).then(result => {
         if (result.length > 0) {
             return response.status(201).json(result)
@@ -223,6 +235,119 @@ exports.nurseryList = (request, response) => {
     })
 }
 
+
+exports.nurseryRequest = (request, response) => {
+    NurseryOwner.find({
+        isVerify: true,
+        isApproved: false
+    }).then(result => {
+        if (result.length > 0) {
+            return response.status(201).json(result)
+        } else {
+            console.log(result)
+            return response.status(201).json({ message: "Result Not Found" })
+        }
+    }).catch(err => {
+        return response.status(500).json({ error: "oops something went wrong" })
+    })
+}
+
+
+exports.nurseryRequestApprove = (request, response) => {
+    NurseryOwner.updateOne({ _id: request.body.nurseryownerId, isVerify: true }, {
+        $set: {
+            isApproved: true
+        }
+    }).then(result => {
+        if (result.modifiedCount == 1) {
+            let transporter = nodemailer.createTransport({
+                host: "smtp.gmail.com",
+                port: 587,
+                secure: false,
+                requireTLS: true,
+                auth: {
+                    user: "thegreenland.prakriti@gmail.com",
+                    pass: "prakriti@123",
+                },
+            });
+
+            var message = {
+                from: "thegreenland.prakriti@gmail.com",
+                to: request.body.nurseryOwnerEmail,
+                subject: "🎉 Message Form Prakritee 🎉",
+                html: `
+                 <p>Your Nursery Is Verified By The Admin. This is Your Dashboard 👇🏻</p>
+                 <br>
+                 <a href="http://localhost:4200">Click Here</a>
+                 <br>
+                 <p>Hurry up go through this link and login and grow your business .Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">thegreenland.prakriti@gmail.com</a>
+                 `
+            };
+
+            transporter.sendMail(message, (err, info) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log("SUCCESS===================================\n" + info);
+                }
+            });
+
+            return response.status(201).json({ success: "Successfully Approved" })
+        } else {
+            console.log(result)
+            return response.status(201).json({ failed: "Not Approved" })
+        }
+    }).catch(err => {
+        return response.status(500).json({ error: "oops something went wrong" })
+    })
+}
+
+exports.nurseryRequestCancel = (request, response) => {
+    NurseryOwner.updateOne({ _id: request.body.nurseryownerId, isVerify: true }, {
+        $set: {
+            isApproved: false
+        }
+    }).then(result => {
+        if (result.modifiedCount == 1) {
+            let transporter = nodemailer.createTransport({
+                host: "smtp.gmail.com",
+                port: 587,
+                secure: false,
+                requireTLS: true,
+                auth: {
+                    user: "thegreenland.prakriti@gmail.com",
+                    pass: "prakriti@123",
+                },
+            });
+
+            var message = {
+                from: "thegreenland.prakriti@gmail.com",
+                to: request.body.nurseryOwnerEmail,
+                subject: "🚨 Message Form Prakritee 🚨",
+                html: `
+                 <p>Your Nursery Is Verified By The Admin.And Admin rejected your request for join the Prakriti.com. Because of some resion</p>
+                 <br>
+                 <p>If Have Any Objection so don't hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">thegreenland.prakriti@gmail.com</a>
+                 `
+            };
+
+            transporter.sendMail(message, (err, info) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log("SUCCESS===================================\n" + info);
+                }
+            });
+
+            return response.status(201).json({ success: "Successfully Rejected" })
+        } else {
+            console.log(result)
+            return response.status(201).json({ failed: "Not Rejected" })
+        }
+    }).catch(err => {
+        return response.status(500).json({ error: "oops something went wrong" })
+    })
+}
 
 exports.blockNursery = (request, response) => {
     NurseryOwner.updateOne({ _id: request.body.nurseryownerId }, {
