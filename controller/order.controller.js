@@ -69,7 +69,7 @@ exports.order = (request, response) => {
                                         numbers: [result.Mobile],
                                     };
                                     fast2sms.sendMessage(option);
-
+                                    console.log(result);
                                     return response
                                         .status(201)
                                         .json({ success: "Orderd Placed Successfully", data: order });

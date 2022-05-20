@@ -18,37 +18,39 @@ const queryRouter = require('./routes/query.router');
 const app = express();
 
 const mongoose = require("mongoose");
-mongoose
-    .connect(
-        "mongodb+srv://raj-k-code:Mamta%4026@mongo-test.6wrm9.mongodb.net/PrakriteeDB?retryWrites=true&w=majority"
-    )
-    .then((result) => {
-        console.log("Data base connnected");
-    })
-    .catch((err) => {
-        console.log(err);
-    });
 
 app.set("view-engine", ejs)
-
-
-app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/admin", adminRouter);
-app.use("/gardener", gardenerRouter);
-app.use("/product", productRouter);
-app.use("/nurseryowner", nurseryownerRouter);
-app.use("/user", userRouter);
-app.use("/cart", cartRouter);
-app.use("/fav", favRouter);
-app.use("/order", orderRouter);
-app.use('/blog', blogRouter);
-app.use("/query", queryRouter);
+
+mongoose
+    .connect(
+        "mongodb+srv://raj-k-code:Mamta%4026@mongo-test.6wrm9.mongodb.net/PrakriteeDB?retryWrites=true&w=majority"
+    )
+    .then((result) => {
+        console.log("Data base connnected");
+        app.use(cors());
+
+        app.use("/admin", adminRouter);
+        app.use("/gardener", gardenerRouter);
+        app.use("/product", productRouter);
+        app.use("/nurseryowner", nurseryownerRouter);
+        app.use("/user", userRouter);
+        app.use("/cart", cartRouter);
+        app.use("/fav", favRouter);
+        app.use("/order", orderRouter);
+        app.use('/blog', blogRouter);
+        app.use("/query", queryRouter);
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+
+
 app.listen(port, () => {
     console.log("-----------SERVER IS STARTED-----------");
 });
