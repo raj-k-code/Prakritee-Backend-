@@ -174,3 +174,24 @@ exports.viewOrder = (request, response) => {
                 .json({ error: "Internal Server Error......." });
         });
 };
+
+exports.orderById = (request, response) => {
+    orderModel
+        .findOne({
+            _id: request.params.id,
+        })
+        .populate("userId")
+        .populate("productList.productId")
+        .then((result) => {
+            if (result) {
+                return response.status(200).json(result);
+            } else {
+                return response.status(200).json({ message: "No Result Found" });
+            }
+        })
+        .catch((err) => {
+            return response
+                .status(500)
+                .json({ error: "Internal Server Error......." });
+        });
+};
