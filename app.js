@@ -13,6 +13,7 @@ const favRouter = require("./routes/fav.router");
 const orderRouter = require("./routes/order.router");
 const blogRouter = require('./routes/blogs.router');
 const ejs = require("ejs");
+const queryRouter = require('./routes/query.router');
 
 const app = express();
 
@@ -47,7 +48,7 @@ app.use("/cart", cartRouter);
 app.use("/fav", favRouter);
 app.use("/order", orderRouter);
 app.use('/blog', blogRouter);
-
+app.use("/query", queryRouter);
 app.listen(port, () => {
     console.log("-----------SERVER IS STARTED-----------");
 });

@@ -50,6 +50,7 @@ exports.signup = (request, response) => {
             });
             return response.status(201).json(result)
         }).catch(err => {
+            console.log(err);
             return response.status(500).json({ message: "Internal Server Error..." })
         })
 }
@@ -117,8 +118,9 @@ exports.updateProfile = (request, response) => {
     if (!error.isEmpty()) {
         return response.status(400).json({ errors: error.array() });
     }
+    if (request.file)
+        request.body.Image = "https://firebasestorage.googleapis.com/v0/b/productdb-eaa0c.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
 
-    request.body.Image = "https://firebasestorage.googleapis.com/v0/b/productdb-eaa0c.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
 
     NurseryOwner.updateOne({
             _id: request.body.nurseryownerId,
@@ -303,50 +305,47 @@ exports.nurseryRequestApprove = (request, response) => {
 }
 
 exports.nurseryRequestCancel = (request, response) => {
-    NurseryOwner.updateOne({ _id: request.body.nurseryownerId, isVerify: true }, {
-        $set: {
-            isApproved: false
-        }
-    }).then(result => {
-        if (result.modifiedCount == 1) {
-            let transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 587,
-                secure: false,
-                requireTLS: true,
-                auth: {
-                    user: "thegreenland.prakriti@gmail.com",
-                    pass: "prakriti@123",
-                },
-            });
+    NurseryOwner.deleteOne({ _id: request.body.nurseryownerId, isApproved: false })
+        .then(result => {
+            if (result.deletedCount == 1) {
+                let transporter = nodemailer.createTransport({
+                    host: "smtp.gmail.com",
+                    port: 587,
+                    secure: false,
+                    requireTLS: true,
+                    auth: {
+                        user: "thegreenland.prakriti@gmail.com",
+                        pass: "prakriti@123",
+                    },
+                });
 
-            var message = {
-                from: "thegreenland.prakriti@gmail.com",
-                to: request.body.nurseryOwnerEmail,
-                subject: "🚨 Message Form Prakritee 🚨",
-                html: `
+                var message = {
+                    from: "thegreenland.prakriti@gmail.com",
+                    to: request.body.nurseryOwnerEmail,
+                    subject: "🚨 Message Form Prakritee 🚨",
+                    html: `
                  <p>Your Nursery Is Verified By The Admin.And Admin rejected your request for join the Prakriti.com. Because of some resion</p>
                  <br>
                  <p>If Have Any Objection so don't hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">thegreenland.prakriti@gmail.com</a>
                  `
-            };
+                };
 
-            transporter.sendMail(message, (err, info) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("SUCCESS===================================\n" + info);
-                }
-            });
+                transporter.sendMail(message, (err, info) => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log("SUCCESS===================================\n" + info);
+                    }
+                });
+                return response.status(201).json({ success: "Successfully Rejected" })
 
-            return response.status(201).json({ success: "Successfully Rejected" })
-        } else {
-            console.log(result)
-            return response.status(201).json({ failed: "Not Rejected" })
-        }
-    }).catch(err => {
-        return response.status(500).json({ error: "oops something went wrong" })
-    })
+            } else {
+                console.log(result)
+                return response.status(201).json({ failed: "Not Rejected" })
+            }
+        }).catch(err => {
+            return response.status(500).json({ error: "oops something went wrong" })
+        })
 }
 
 exports.blockNursery = (request, response) => {
@@ -452,3 +451,20 @@ exports.unBlockNursery = (request, response) => {
             return response.status(500).json({ error: "oops something went wrong" })
         });
 }
+
+
+exports.nurseryById = (request, response) => {
+    NurseryOwner
+        .findOne({ _id: request.params.nurseryId })
+        .then(result => {
+            if (result) {
+                return response.status(200).json(result);
+            } else {
+                return response.status(200).json({ message: "No Result Found" });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({ error: "something went wrong" });
+        });
+};

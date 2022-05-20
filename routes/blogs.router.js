@@ -34,6 +34,10 @@ router.get('/blog-list',
     blogController.blogList
 );
 
+router.get('/blog-list-nurseryowner/:nurseryId',
+    blogController.blogListByNursery
+);
+
 router.post('/edit', upload.single('blogImage'),
     body("blogTitle").notEmpty(),
     body("blogSubTitle").notEmpty(),

@@ -9,8 +9,15 @@ const bookingSchema = new mongoose.Schema({
     bookRequests: [{
         userId: {
             type: Schema.Types.ObjectId,
-            ref: "user"
+            ref: "user",
+            default: null
         },
+        nurseryId: {
+            type: Schema.Types.ObjectId,
+            ref: "nurseryOwner",
+            default: null
+        },
+
         isApproved: {
             type: Boolean,
             default: false

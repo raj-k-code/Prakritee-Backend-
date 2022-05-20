@@ -385,10 +385,16 @@ exports.bookTheGardener = async(request, response) => {
         for (i in booking.bookRequests) {
             if (booking.bookRequests[i].userId == request.body.userId)
                 return response.status(200).json({ message: 'Already Requested This Gardener' });
+
+            if (booking.bookRequests[i].nurseryId == request.body.nurseryId)
+                return response.status(200).json({ message: 'Already Requested This Gardener' });
         }
 
+        if (request.body.nurseryId)
+            await booking.bookRequests.push({ nurseryId: request.body.nurseryId });
+        else
+            await booking.bookRequests.push({ userId: request.body.userId });
 
-        await booking.bookRequests.push({ userId: request.body.userId });
         booking.save()
             .then(result => {
                 console.log(result);
@@ -439,7 +445,10 @@ exports.bookTheGardener = async(request, response) => {
         let newBooking = await new Booking();
         newBooking.gardenerId = await request.body.gardenerId;
 
-        await newBooking.bookRequests.push({ userId: request.body.userId });
+        if (request.body.nurseryId)
+            await newBooking.bookRequests.push({ nurseryId: request.body.nurseryId });
+        else
+            await newBooking.bookRequests.push({ userId: request.body.userId });
 
         newBooking.save()
             .then(result => {
@@ -489,128 +498,184 @@ exports.bookTheGardener = async(request, response) => {
     }
 }
 
-exports.approveRequest = (request, response) => {
-    Booking.updateOne({ gardenerId: request.body.gardenerId, "bookRequests.userId": request.body.userId }, {
-            $set: {
-                "bookRequests.$.isApproved": true
-            }
-        })
-        .then(result => {
-            console.log(result);
-            if (result.modifiedCount == 1) {
+exports.approveRequest = async(request, response) => {
+    // Booking.updateOne(
+    //     {$or:{ gardenerId: request.body.gardenerId, "bookRequests.userId": request.body.userId }},
+    //     {
+    //         $set: {
+    //             "bookRequests.$.isApproved": true
+    //         }
+    //     })
+    console.log(request.body);
+    var update;
+    Booking.findOne({ gardenerId: request.body.gardenerId })
+        .then(async(result) => {
+            if (result) {
 
-                User.findOne({ _id: request.body.userId }).then(user => {
-                    if (user) {
-                        let transporter = nodemailer.createTransport({
-                            host: "smtp.gmail.com",
-                            port: 587,
-                            secure: false,
-                            requireTLS: true,
-                            auth: {
-                                user: "bidauction23@gmail.com",
-                                pass: "brainforcode",
-                            },
-                        });
-
-                        var message = {
-                            from: "bidauction23@gmail.com",
-                            to: user.userEmail,
-                            subject: "🎉 Approval 🎉",
-                            html: '<p>Your request is approved by the Gardener.Please go to our website to contact him quickly</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
-                        };
-
-                        transporter.sendMail(message, (err, info) => {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                console.log("SUCCESS===================================\n" + info);
+                for (let req of result.bookRequests) {
+                    if (req.userId == request.body.userId) {
+                        console.log("inside If===============")
+                        update = await Booking.updateOne({ gardenerId: request.body.gardenerId, "bookRequests.userId": request.body.userId }, {
+                            $set: {
+                                "bookRequests.$.isApproved": true
                             }
                         });
+                    } else if (req.nurseryId == request.body.nurseryId) {
+                        console.log("inside else===============")
 
-                        return response.status(200).json({ success: "Response Sent" });
-                    } else
-                        return response.status(201).json({ failed: "Response Sent But Notification didin't" });
+                        update = await Booking.updateOne({ gardenerId: request.body.gardenerId, "bookRequests.nurseryId": request.body.nurseryId }, {
+                            $set: {
+                                "bookRequests.$.isApproved": true
+                            }
+                        });
+                    }
+                }
+                console.log(update.modifiedCount)
+                if (update.modifiedCount == 1) {
+                    let transporter = nodemailer.createTransport({
+                        host: "smtp.gmail.com",
+                        port: 587,
+                        secure: false,
+                        requireTLS: true,
+                        auth: {
+                            user: "bidauction23@gmail.com",
+                            pass: "brainforcode",
+                        },
+                    });
 
+                    var message = {
+                        from: "bidauction23@gmail.com",
+                        to: request.body.email,
+                        subject: "🎉 Approval 🎉",
+                        html: '<p>Your request is approved by the Gardener.Please go to our website to contact him quickly</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+                    };
 
-                }).catch(err => {
-                    return response.status(500).json({ error: "oops something went wrong" })
-                })
+                    transporter.sendMail(message, (err, info) => {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.log("SUCCESS===================================\n" + info);
+                        }
+                    });
+                    return response.status(200).json({ success: "Response Sent update-else" });
+
+                } else {
+                    return response.status(200).json({ failed: "Record Not Found result else" });
+                }
+
             } else {
-                return response.status(200).json({ failed: "Not Approved" });
-            }
-        }).catch(err => {
-            console.log(err);
-            return response.status(500).json({ error: "Internal Server Error" });
-        });
-}
-
-exports.cancelRequest = (request, response) => {
-    Booking.updateOne({ gardenerId: request.body.gardenerId, "bookRequests.userId": request.body.userId }, {
-            $set: {
-                "bookRequests.$.isApproved": false
+                return response.status(200).json({ failed: "Record Not Found" });
             }
         })
-        .then(result => {
-            console.log(result);
-            if (result.modifiedCount == 1) {
-
-                Booking.updateOne({ gardenerId: request.body.gardenerId }, { $pull: { "bookRequests": { userId: request.body.userId } } }, { safe: true, multi: false })
-                    .then(result => {
-                        if (result.modifiedCount == 1) {
-                            User.findOne({ _id: request.body.userId }).then(user => {
-                                if (user) {
-                                    let transporter = nodemailer.createTransport({
-                                        host: "smtp.gmail.com",
-                                        port: 587,
-                                        secure: false,
-                                        requireTLS: true,
-                                        auth: {
-                                            user: "bidauction23@gmail.com",
-                                            pass: "brainforcode",
-                                        },
-                                    });
-
-                                    var message = {
-                                        from: "bidauction23@gmail.com",
-                                        to: user.userEmail,
-                                        subject: " Rejected ",
-                                        html: '<p>Your request is rejected by the Gardener.Please go to our website to see more gardeners</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
-                                    };
-
-                                    transporter.sendMail(message, (err, info) => {
-                                        if (err) {
-                                            console.log(err);
-                                        } else {
-                                            console.log("SUCCESS===================================\n" + info);
-                                        }
-                                    });
-
-                                    return response.status(200).json({ success: "Response Sent" });
-                                } else
-                                    return response.status(201).json({ failed: "Response Sent But Notification didin't" });
-
-
-                            }).catch(err => {
-                                return response.status(500).json({ error: "oops something went wrong" })
-                            })
-                        } else {
-                            return response.status(200).json({ failed: "No Result Found" });
-                        }
-                    }).catch(err => {
-                        console.log(err);
-                        return response.status(500).json({ message: "Internal Server Error" });
-                    });
-            } else {
-                return response.status(200).json({ failed: "Not Canceled" });
-            }
-        }).catch(err => {
+        .catch(err => {
             console.log(err);
             return response.status(500).json({ error: "Internal Server Error" });
         });
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //         User.findOne({ _id: request.body.userId }).then(user => {
+    //             if (user) {
+    //                 let transporter = nodemailer.createTransport({
+    //                     host: "smtp.gmail.com",
+    //                     port: 587,
+    //                     secure: false,
+    //                     requireTLS: true,
+    //                     auth: {
+    //                         user: "bidauction23@gmail.com",
+    //                         pass: "brainforcode",
+    //                     },
+    //                 });
+
+    //                 var message = {
+    //                     from: "bidauction23@gmail.com",
+    //                     to: user.userEmail,
+    //                     subject: "🎉 Approval 🎉",
+    //                     html: '<p>Your request is approved by the Gardener.Please go to our website to contact him quickly</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+    //                 };
+
+    //                 transporter.sendMail(message, (err, info) => {
+    //                     if (err) {
+    //                         console.log(err);
+    //                     } else {
+    //                         console.log("SUCCESS===================================\n" + info);
+    //                     }
+    //                 });
+
+    //                 return response.status(200).json({ success: "Response Sent" });
+    //             } else
+    //                 return response.status(201).json({ failed: "Response Sent But Notification didin't" });
+
+
+    //         }).catch(err => {
+    //             return response.status(500).json({ error: "oops something went wrong" })
+    //         })
+    //     } else {
+    //         return response.status(200).json({ failed: "Not Approved" });
+    //     }
+    // }).catch(err => {
+    //     console.log(err);
+    //     return response.status(500).json({ error: "Internal Server Error" });
+    // });
+}
+
+exports.cancelRequest = async(request, response) => {
+    var update;
+    if (request.body.userId)
+        update = await Booking.updateOne({ gardenerId: request.body.gardenerId }, { $pull: { "bookRequests": { userId: request.body.userId } } }, { safe: true, multi: false });
+    else
+        update = await Booking.updateOne({ gardenerId: request.body.gardenerId }, { $pull: { "bookRequests": { nurseryId: request.body.nurseryId } } }, { safe: true, multi: false });
+
+    // .then(result => {
+    if (update.modifiedCount == 1) {
+        let transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false,
+            requireTLS: true,
+            auth: {
+                user: "bidauction23@gmail.com",
+                pass: "brainforcode",
+            },
+        });
+
+        var message = {
+            from: "bidauction23@gmail.com",
+            to: request.body.email,
+            subject: " Rejected ",
+            html: '<p>Your request is rejected by the Gardener.Please go to our website to see more gardeners</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+        };
+
+        transporter.sendMail(message, (err, info) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log("SUCCESS===================================\n" + info);
+            }
+        });
+
+        return response.status(200).json({ success: "Response Sent" });
+    } else
+        return response.status(201).json({ failed: "Didn't Rejected" });
+
+    // }).catch(err => {
+    // console.log(err);
+    // return response.status(500).json({ error: "Internal Server Error" });
+    // });
 }
 
 exports.viewRequest = (request, response) => {
-    Booking.findOne({ gardenerId: request.body.gardenerId }).populate('bookRequests.userId').populate('gardenerId').then(result => {
+    Booking.findOne({ gardenerId: request.body.gardenerId }).populate('bookRequests.userId').populate('bookRequests.nurseryId').populate('gardenerId').then(result => {
         if (result) {
             return response.status(201).json(result)
         } else {

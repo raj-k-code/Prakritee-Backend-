@@ -49,7 +49,7 @@ router.post("/product-list-similar", productController.productListSimilar);
 
 router.get("/product-list-category/:name", productController.productListByCategory);
 
-router.post("/product-list-by-nurseryowner", token.verifyToken, productController.productListByNurseryOwner);
+router.post("/product-list-by-nurseryowner", productController.productListByNurseryOwner);
 
 router.get("/product-by-id/:productId", productController.productById);
 

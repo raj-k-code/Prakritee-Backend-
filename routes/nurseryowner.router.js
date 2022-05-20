@@ -41,8 +41,6 @@ router.post("/signin-with-google",
 router.post("/edit", token.verifyToken, upload.single("Image"),
     body("nurseryName").notEmpty(),
     body("nurseryOwnerName").notEmpty(),
-    body("nurseryOwnerEmail").notEmpty().isEmail(),
-    body("nurseryOwnerPassword").notEmpty().isLength(6),
     body("nurseryOwnerMobile").notEmpty().isMobilePhone(),
     body("nurseryAddress").notEmpty(),
     body("nurseryownerId").notEmpty(),
@@ -66,6 +64,9 @@ router.post("/forgot-password", nurseryownerController.forgotPassword);
 
 router.post("/block-nursery", nurseryownerController.blockNursery)
 
-router.post("/unblock-nursery", nurseryownerController.unBlockNursery)
+router.post("/unblock-nursery", nurseryownerController.unBlockNursery);
+
+router.get("/nursery-by-id/:nurseryId", nurseryownerController.nurseryById);
+
 
 module.exports = router;
