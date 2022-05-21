@@ -43,7 +43,7 @@ exports.signup = (request, response) => {
                 from: "bidauction23@gmail.com",
                 to: result.gardenerEmail,
                 subject: "Confirm your account on Prakritee",
-                html: '<p>you are a nice person for signing up with Prakritee! You must follow this link within 30 days of registration to activate your account:</p><a href= "http://localhost:3000/gardener/verify-account/' + result._id + '">click here</a><p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+                html: '<p>you are a nice person for signing up with Prakritee! You must follow this link within 30 days of registration to activate your account:</p><a href= "https://prakritee-user.herokuapp.com/gardener/verify-account/' + result._id + '">click here</a><p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
             };
 
             transporter.sendMail(message, (err, info) => {
@@ -120,7 +120,7 @@ exports.updateProfile = (request, response) => {
         return response.status(400).json({ errors: error.array() });
     }
 
-    request.body.gardenerImage = "https://firebasestorage.googleapis.com/v0/b/productdb-eaa0c.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
+    request.body.gardenerImage = "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
 
     console.log(request.body.gardenerImage)
 
@@ -143,7 +143,7 @@ exports.updateProfile = (request, response) => {
 
 exports.verifyAccountPage = (request, response) => {
     return response.status(200).render("verify-account.ejs", {
-        apiUrl: "http://localhost:3000/gardener/get-verified-account/" + request.params.id
+        apiUrl: "https://prakritee-user.herokuapp.com/gardener/get-verified-account/" + request.params.id
     });
 }
 

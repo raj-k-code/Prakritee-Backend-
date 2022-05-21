@@ -8,7 +8,7 @@ exports.addBlog = (request, response) => {
         return response.status(400).json({ errors: error.array() });
     }
 
-    request.body.blogImage = "https://firebasestorage.googleapis.com/v0/b/productdb-eaa0c.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
+    request.body.blogImage = "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
 
     Blogs.create(request.body)
         .then(result => {
@@ -86,7 +86,7 @@ exports.editBlog = (request, response) => {
     }
 
     if (request.file) {
-        request.body.blogImage = "https://firebasestorage.googleapis.com/v0/b/productdb-eaa0c.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
+        request.body.blogImage = "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
     }
 
     Blogs.updateOne({ _id: request.body.blogId }, {
@@ -98,7 +98,7 @@ exports.editBlog = (request, response) => {
                     requests({
                         url: request.body.oldImage,
                         qs: {
-                            key: "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDnyJ+6t98bJQwl\nBe24m7gBCH8Slb3GG9FB6avOOY5YAIGY0zsdt7vs1njzYvZitTBaE3epoxcaua1J\nya8BzHFp/u2YSOQQM/v+X7qVbbXCBS/E7M43bP2/NNwOLuoY2MmIa8EVJejqeSTT\nlssAJcNho9H8g3UbA3/28UjpC2gv2ctqAPD7gTNFbTQ3Bq2wvrNuetgAD+C88lTC\nYywncEDC9IWsWov6yL9MIp5cMpS8ISIU+25ZrIM7QmCTDHyutJOruo1Z3ZbSNGwc\nArATZ0avYVuwRRwICrUcLyMr1lfxAnDM6Lgn2uRBB1k+ISAhA+0nx/ST7FNwJprg\nhB6sDoSlAgMBAAECggEAII8IEPx/NJrxp8m7aPFG2a5N21h5ffiuXmnqnl9rZWU8\nzzDs3vHOTiiaeOXv4lG9ZwnRB11Hg5ONig3wrXoAfHk4+ulSUAxdW5Aq746nt4du\n/GSfWx3OTyuntb5VWAQr2yP3zXazzywRRj+qaGzlkzOl7aixrIfDU/b03PejPQVA\nnwOYQRPRXDjTKllM8zr2dQ2mgIe9L7b4BWiZVNFx/fH2OunCcz9hi/0Ojnv3PjXy\n70nFEhU+N9wJyOGzA1zeVRjgYuPkePRaJvHKJRw3E0I8/58LNmFY26sYJvcEzQeI\n0dOdnQbpgic3hYsyeLhmoXNR7sCw9q5Dndf5RsBbSQKBgQD5lCmO2gC4LkXAIYKK\nzOi1yUouCZYBljPObs9RdkWIzCW0nhEd1zjF+goXqpb2cnFxO2NZm7ajMZi+doHN\nc76kskqAWHyMZlmmAF07cKmvwfLttdxa+SGMPKWYYFzdfAb5HPjynGXBW5mJqU5y\nCEOhrjaCRZqjqDrXN00w2oGMhwKBgQDtv0FaGn4FhG8ozZeClxagCxNPozZcotGp\n9zzn8eHW2Q39zWIkMocb4C16allxZqEIMCselxOCkoa3YwV8wdUg6xxc/M+RNfCZ\nooQ4/Y0kmIZklT4hETson1ubwYrWRwjDkKsaAeeicw/+8edso5mMcDneXZia1Mop\n/cMbA518cwKBgQC6BBINZLKQk/xsvQ0dAqiXhRWCxqZFPHwUakafArXExdN8kStU\nwGqSNFB9XynxOU8QBCGCUiqH65laq90HEjOPcUtR6aG6yzYaIb9bZBc05it3vMom\nC/VTHoiVz4ynj59q4Isz2BmHSgxfrA7JsxslUEFUSyh8vhBNA+zGcrWH1QKBgGpK\ne3lBJt5omxnu8LHdwqvCx9tu6Lr5wCrw8jXwmjtnxy2VSS9Nt8Hqs+pq6ZodfBkh\nD+YZPQu/XqNWjfl830BcXM3l6RbOusa1NdAU66lU16DYaHJ4Na6vsFEuclfiYjSs\n1RJHj7u9HYWpuQGFEv0Kn5Se2789KzUi0rudHiepAoGAQ/Zw3PTK9xwVmm3sd5ZI\nSuvg1CHRHHAVLxQFpy+GVQy+kO/LgVWFponf4UKEL39VV1syuvzp4v9ytX57eqks\nJjzg/8+3fgsT6qo16LZgA5/ql1IRpG8zmhbItKLygx+9akqAc/oPpqVy9up4kQLC\nu62tjbyu3phwCOqp7wIBVlI=",
+                            key: "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDf137SRk5j7vyH\nbP9dJVy/O0NYPcA7skFUtQDwoVzs8Wu6ct1i6HECaYDhTEto0xwPyNGhMtStx/X6\n1msQpiKS2qhTBKM9PgYiEAD0A/WH0E5zb7DODPoI3jBhK7UjPGiOk/c0gJI/OWv3\nePelFpd+KjondH084KTeVVz4hegPQl0B4zJybZN+WBNTf6suS56M8tdi7ho4WyIx\nRpd51LU6uguw/VpgaVmN4jqmvt5vIrSpho0ycDbXXA1jCWNpeiG8YHB/Lkffo9H3\nrSwLbi9t6aGWVsnnscC2ABp8NVnk/DFZIkD5Ys7y1pRyLCnTO2crqG2E9aJeZgw0\nl1V0fNTtAgMBAAECggEAHCBs7Ckvcnk2PCIjGGY4eEMPHEhuHlIwyV8RJitwjMlt\nOvlx/hqtEJuHOUgn9Z0JWqZmSPYlKU0GCKXmwCnQEFnvarcbd/eSN7eBFyhkMtOm\n9/Rh6BJTXMfmll8ynKHblYbcOjmpps4lVexaWeEz2gOeWRTXI84qiVF6pDPXTAtT\ne6rNkmrJ5SdxCV4qT5u/0A8Tpmhf3aQ6ZMDwqOPtAgcdJkbz+p7MngxmFtsq4u3g\nMXPrCbKDjvzrR97JWCggGQ3kaV1s1awCmi5/6Ri1z4fADjvxzxEaX3HtNoTYD5yc\nzXpOM+g/Yi0vQgCRUBQ7oHlyVn1BXEx1OoKvneyHtQKBgQD8iH2P+DqHDEBrVK7g\nibwdjamrGxe6CAzlgDnEf4iIdYQfn2x3+zIYxJCDrUBKcF8gZAYtCbWeE5/aKRTv\nW/k4kVVIE9AqMvbzmMT0g87A7tNtQG6Z6/gkkVmoj6iqhnrSG8vnznvojwJ+D2qn\nSvbirrH6RDLkrhpRfkOu3dsVIwKBgQDi6ivORZbb0+GPKbWJ1XVQ0Y+AG1H/4ZdC\nSa0QWS/7d9Ts/TNt7SJi7KoXHkMd9JshpOdJ8agvdTngMzT7n8iW0EU2riWv52cx\nzUMcpvhXw7WBljnCB2Kle7cOVs1zswpjznpzNjQcT/o3rIfFmPmzYExhSWpdpOx2\ngjpXk+w2rwKBgC0jMF5FXiC5XeJRVpinxcn6gjMlOo5z1epHiwvGR98sMht84WRo\nr8GhkLsYgn9LqpUdi8UNETtaAp557VYDOH6V64pgkDqatW1BByM1VAVEKuJCPAKj\nHM1cdYwdcWZZdyaK9V1PmPIubaGem8+fJJXL59/1xKr/O5EJYouk9/3FAoGBAL/K\nz+XT+dOqPe8EgPWUX0lFJzZPYTqXEYMsxMOZrq2stmLtDGgwU60rfgR2RqJuGiUQ\nvZFJWS9rtNRkU7cOcbvPI4E5Jo+MVjPI252/Hw8HU0XJlN4D4gQfEjVjdtoBDZoY\nbnUs7lSz4Ljn8gY4620KyuQ76lRmTptILUnStIfvAoGAGecTT+N2sTHIAZLTX2dZ\nCMJ7tG39d2v7Bh5k9H9pLJq4UZLCG68Ig31glyGN05R4R0mnFUxWnFL2F99Vkp0a\nyOPFzESJmN9gWaxJrPWfVU4JvQw/q27F/h/cofWJ6EEIxEev++W/+Pav7JCyE1sd\nozt/ZtGewJLII7zOEDI5BpE=",
                         }, // you can find your private-key in your keyfile.json....
                         method: "DELETE",
                     });

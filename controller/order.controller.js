@@ -150,7 +150,7 @@ exports.orderStatus = (request, response) => {
         .then((resultDetails) => {
             // console.log(resultDetails);
             // response.send("payment success");
-            return response.redirect('http://localhost:4200/');
+            return response.redirect('https://prakritee-user.herokuapp.com/');
         });
 };
 

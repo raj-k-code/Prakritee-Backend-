@@ -119,7 +119,7 @@ exports.updateProfile = (request, response) => {
         return response.status(400).json({ errors: error.array() });
     }
     if (request.file)
-        request.body.Image = "https://firebasestorage.googleapis.com/v0/b/productdb-eaa0c.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
+        request.body.Image = "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
 
 
     NurseryOwner.updateOne({

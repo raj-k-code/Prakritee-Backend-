@@ -39,7 +39,7 @@ exports.signup = (request, response) => {
                 from: "bidauction23@gmail.com",
                 to: result.userEmail,
                 subject: "Confirm your account on Prakritee",
-                html: '<p>you are a nice person for signing up with Prakritee! You must follow this link within 30 days of registration to activate your account:</p><a href= "http://localhost:3000/user/verify-account/' + result._id + '">click here</a><p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+                html: '<p>you are a nice person for signing up with Prakritee! You must follow this link within 30 days of registration to activate your account:</p><a href= "https://prakritee-user.herokuapp.com/' + result._id + '">click here</a><p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
             };
 
             transporter.sendMail(message, (err, info) => {
@@ -134,7 +134,7 @@ exports.updateProfile = (request, response) => {
         return response.status(400).json({ errors: error.array() });
     }
 
-    request.body.userImage = "https://firebasestorage.googleapis.com/v0/b/productdb-eaa0c.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
+    request.body.userImage = "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
 
     User.updateOne({
             _id: request.body.userId,
@@ -156,7 +156,7 @@ exports.updateProfile = (request, response) => {
 
 exports.verifyAccountPage = (request, response) => {
     return response.status(200).render("verify-account.ejs", {
-        apiUrl: "http://localhost:3000/user/get-verified-account/" + request.params.id
+        apiUrl: "https://prakritee-user.herokuapp.com/user/get-verified-account/" + request.params.id
     });
 }
 

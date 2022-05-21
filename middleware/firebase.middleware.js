@@ -2,11 +2,11 @@ const { Storage } = require('@google-cloud/storage');
 const path = require('path');
 
 const storage = new Storage({
-    projectId: "productdb-eaa0c",
-    keyFilename: "productdb-eaa0c-firebase-adminsdk-jgsmm-e0d9b194c0.json"
+    projectId: "prakriti-3d8ad",
+    keyFilename: "prakriti-3d8ad-firebase-adminsdk-5bj2j-33feaf0a09.json"
 });
 
-let bucketName = "gs://productdb-eaa0c.appspot.com";
+let bucketName = "gs://prakriti-3d8ad.appspot.com";
 
 exports.fireBaseStorage = async(request, response, next) => {
     try {
