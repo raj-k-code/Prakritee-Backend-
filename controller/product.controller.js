@@ -8,7 +8,7 @@ exports.addProduct = (request, response) => {
         return response.status(400).json({ errors: error.array() });
     }
 
-    request.body.productImage = "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
+    request.body.productImage = "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
 
     Product.create(request.body)
         .then(result => {
