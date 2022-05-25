@@ -8,7 +8,7 @@ const storage = new Storage({
 
 let bucketName = "gs://prakriti-3d8ad.appspot.com";
 
-exports.fireBaseStorage = async(request, response, next) => {
+exports.fireBaseStorage = async (request, response, next) => {
     try {
 
         await storage.bucket(bucketName).upload(path.join(__dirname, '../', "./public/images/") + request.file.filename, {
@@ -19,6 +19,8 @@ exports.fireBaseStorage = async(request, response, next) => {
                 }
             }
         })
+        console.log("Inside try==============================");
+
     } catch (err) {
         console.log(err);
     }

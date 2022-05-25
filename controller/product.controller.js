@@ -3,6 +3,8 @@ const { validationResult } = require("express-validator");
 const requests = require("request");
 
 exports.addProduct = (request, response) => {
+    console.log(request.file);
+
     const error = validationResult(request);
     if (!error.isEmpty()) {
         return response.status(400).json({ errors: error.array() });
@@ -53,6 +55,8 @@ exports.productList = (request, response, next) => {
 }
 
 exports.edit = (request, response, next) => {
+    console.log(request.file);
+     
     const errors = validationResult(request);
     if (!errors.isEmpty())
         return response.status(400).json({ errors: errors.array() });

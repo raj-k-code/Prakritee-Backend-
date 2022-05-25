@@ -9,7 +9,7 @@ const multer = require("multer");
 const { route } = require("./admin.router");
 var storage = multer.diskStorage({
     destination: "public/images",
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, Date.now() + "-" + file.originalname);
     },
 });
