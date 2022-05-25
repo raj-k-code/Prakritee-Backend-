@@ -8,7 +8,7 @@ const token = require("../middleware/token.middleware");
 const multer = require("multer");
 var storage = multer.diskStorage({
     destination: "public/images",
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, Date.now() + "-" + file.originalname);
     },
 });
@@ -44,7 +44,7 @@ router.post("/edit", token.verifyToken, upload.single("userImage"),
     body("userMobile").notEmpty().isMobilePhone(),
     body("userAddress").notEmpty(),
     body("userId").notEmpty(),
-
+    firebase.fireBaseStorage,
     userController.updateProfile
 );
 
