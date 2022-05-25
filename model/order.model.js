@@ -35,7 +35,7 @@ const orderSchema = new mongoose.Schema({
     },
     orderStatus: {
         type: String,
-        default: "shipped"
+        default: "pendding"
     },
     total: {
         type: Number,

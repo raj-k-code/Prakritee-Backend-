@@ -195,3 +195,88 @@ exports.orderById = (request, response) => {
                 .json({ error: "Internal Server Error......." });
         });
 };
+
+
+exports.historyByNursery = (request, response) => {
+    orderModel
+        .find()
+        .populate("userId")
+        .populate("productList.productId")
+        .then((result) => {
+            // console.log(result);
+            if (result.length > 0) {
+                console.log(result);
+
+                for (var i = 0; i < result.length; i++) {
+                    for (var j = 0; j < result[i].productList.length; j++) {
+                        if (result[i].productList[j].productId.createdBy != request.body.nurseryId) {
+                            result[i].productList.splice(j, 1);
+                        }
+                    }
+
+                    if (result[i].productList.length == 0) {
+                        result.splice(i, 1);
+                    }
+                }
+
+
+                return response.status(200).json(result);
+            } else {
+                return response.status(200).json({ message: "No Result Found" });
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            return response
+                .status(500)
+                .json({ error: "Internal Server Error......." });
+        });
+}
+
+exports.latestOrder = (request, response) => {
+    var regx = new RegExp(request.body.status, 'i');
+    
+    orderModel
+        .find({
+            orderStatus: regx,
+        })
+        .populate("userId")
+        .populate("productList.productId")
+        .then((result) => {
+            if (result.length >0) {
+                return response.status(200).json(result);
+            } else {
+                return response.status(200).json({ message: "No Result Found" });
+            }
+        })
+        .catch((err) => {
+            return response
+                .status(500)
+                .json({ error: "Internal Server Error......." });
+        });
+};
+
+
+exports.changeOrderStatus = (request, response) => {    
+    orderModel
+        .updateOne({ _id: request.body.orderId }, {
+            $set: {
+                orderStatus : request.body.status 
+            }
+        })
+        .then((result) => {
+            console.log(result);
+
+            if (result.modifiedCount == 1) {
+                return response.status(200).json({success: "Changed Successfully"});
+            } else {
+                return response.status(200).json({ failed: "Not Changed" });
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            return response
+                .status(500)
+                .json({ error: "Internal Server Error......." });
+        });
+};
