@@ -123,13 +123,13 @@ exports.updateProfile = (request, response) => {
 
 
     NurseryOwner.updateOne({
-            _id: request.body.nurseryownerId,
-            isVerify: true,
-            isBlock: false,
-            isApproved: true
-        }, {
-            $set: request.body
-        })
+        _id: request.body.nurseryownerId,
+        isVerify: true,
+        isBlock: false,
+        isApproved: true
+    }, {
+        $set: request.body
+    })
         .then(result => {
             if (result.modifiedCount == 1)
                 return response.status(201).json({ success: "Updated Successfolly" });
@@ -150,10 +150,10 @@ exports.verifyAccountPage = (request, response) => {
 exports.getVerifiedAccount = (request, response) => {
 
     NurseryOwner.updateOne({ _id: request.params.id }, {
-            $set: {
-                isVerify: true
-            }
-        })
+        $set: {
+            isVerify: true
+        }
+    })
         .then(result => {
             if (result.modifiedCount == 1)
                 return response.status(200).render("success-page.ejs");
@@ -350,10 +350,10 @@ exports.nurseryRequestCancel = (request, response) => {
 
 exports.blockNursery = (request, response) => {
     NurseryOwner.updateOne({ _id: request.body.nurseryownerId }, {
-            $set: {
-                isBlock: true
-            }
-        })
+        $set: {
+            isBlock: true
+        }
+    })
         .then(result => {
             if (result.modifiedCount == 1) {
                 NurseryOwner.findOne({ _id: request.body.nurseryownerId }).then(nurseryowner => {
@@ -402,10 +402,10 @@ exports.blockNursery = (request, response) => {
 
 exports.unBlockNursery = (request, response) => {
     NurseryOwner.updateOne({ _id: request.body.nurseryownerId }, {
-            $set: {
-                isBlock: false
-            }
-        })
+        $set: {
+            isBlock: false
+        }
+    })
         .then(result => {
             if (result.modifiedCount == 1) {
                 NurseryOwner.findOne({ _id: request.body.nurseryownerId }).then(nurseryowner => {
