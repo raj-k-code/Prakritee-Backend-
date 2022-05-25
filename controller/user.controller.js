@@ -134,15 +134,16 @@ exports.updateProfile = (request, response) => {
         return response.status(400).json({ errors: error.array() });
     }
 
-    request.body.userImage = "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
+    if (request.file)
+        request.body.userImage = "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
 
     User.updateOne({
-            _id: request.body.userId,
-            isVerify: true,
-            isBlock: false
-        }, {
-            $set: request.body
-        })
+        _id: request.body.userId,
+        isVerify: true,
+        isBlock: false
+    }, {
+        $set: request.body
+    })
         .then(result => {
             if (result.modifiedCount == 1)
                 return response.status(201).json({ success: "Updated Successfully" });
@@ -162,10 +163,10 @@ exports.verifyAccountPage = (request, response) => {
 
 exports.getVerifiedAccount = (request, response) => {
     User.updateOne({ _id: request.params.id }, {
-            $set: {
-                isVerify: true
-            }
-        })
+        $set: {
+            isVerify: true
+        }
+    })
         .then(result => {
             if (result.modifiedCount == 1)
                 return response.status(200).render("success-page.ejs");
@@ -247,10 +248,10 @@ exports.userList = (request, response) => {
 exports.blockUser = (request, response) => {
     console.log(request.body);
     User.updateOne({ _id: request.body.userId }, {
-            $set: {
-                isBlock: true
-            }
-        })
+        $set: {
+            isBlock: true
+        }
+    })
         .then(result => {
             console.log(result);
 
@@ -303,10 +304,10 @@ exports.unBlockUser = (request, response) => {
     console.log(request.body);
 
     User.updateOne({ _id: request.body.userId }, {
-            $set: {
-                isBlock: false
-            }
-        })
+        $set: {
+            isBlock: false
+        }
+    })
         .then(result => {
             console.log(result);
             if (result.modifiedCount == 1) {
