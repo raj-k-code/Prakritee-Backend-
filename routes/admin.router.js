@@ -7,7 +7,7 @@ const firebase = require("../middleware/firebase.middleware");
 const multer = require("multer");
 var storage = multer.diskStorage({
     destination: "public/images",
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, Date.now() + "-" + file.originalname);
     },
 });

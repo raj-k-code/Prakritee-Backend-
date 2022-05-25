@@ -127,7 +127,7 @@ exports.userById = (request, response) => {
 
 exports.updateProfile = (request, response) => {
     console.log(request.body);
-    console.log(request.file.filename)
+    console.log(request.file)
 
     const error = validationResult(request);
     if (!error.isEmpty()) {

@@ -8,7 +8,7 @@ const token = require("../middleware/token.middleware");
 const multer = require("multer");
 var storage = multer.diskStorage({
     destination: "public/images",
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, Date.now() + "-" + file.originalname);
     },
 });
@@ -44,6 +44,7 @@ router.post("/edit", token.verifyToken, upload.single("Image"),
     body("nurseryOwnerMobile").notEmpty().isMobilePhone(),
     body("nurseryAddress").notEmpty(),
     body("nurseryownerId").notEmpty(),
+    firebase.fireBaseStorage,
 
     nurseryownerController.updateProfile
 );
