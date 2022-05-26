@@ -45,6 +45,7 @@ router.post("/edit", token.verifyToken, upload.single("gardenerImage"),
     body("gardenerAddress").notEmpty(),
     body("gardenerExperience").notEmpty(),
     body("gardenerId").notEmpty(),
+
     firebase.fireBaseStorage,
     gardenerController.updateProfile
 );

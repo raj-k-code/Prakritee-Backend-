@@ -113,16 +113,17 @@ exports.signinWithGoogle = (request, response) => {
 }
 
 exports.updateProfile = (request, response) => {
-    console.log(request.file.filename)
+    console.log(request.file)
+    console.log(request.body);
 
     const error = validationResult(request);
     if (!error.isEmpty()) {
         return response.status(400).json({ errors: error.array() });
     }
     if (request.file)
-        request.body.userImage = "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
+        request.body.gardenerImage = "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
 
-    console.log(request.body.gardenerImage)
+    console.log(request.body.gardenerImage + "===========================")
 
     Gardener.updateOne({
         _id: request.body.gardenerId,
