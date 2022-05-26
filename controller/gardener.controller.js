@@ -369,7 +369,7 @@ exports.rateTheGardener = async (request, response) => {
         });
         gardener.save().then(result => {
             if (result)
-                return response.status(200).json({ data: result, succes: "Rated Successfully" })
+                return response.status(200).json({ data: result, success: "Rated Successfully" })
             else
                 return response.status(200).json({ data: result, failed: "Not Rated Successfully" })
         }).catch(err => {

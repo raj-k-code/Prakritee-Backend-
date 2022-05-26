@@ -39,7 +39,7 @@ exports.deleteBlog = (request, response, next) => {
 
 exports.blogList = (request, response) => {
 
-    Blogs.find().populate('createdBy')
+    Blogs.find().populate('createdBy').sort({ _id: -1 })
         .then(result => {
             if (result.length > 0)
                 return response.status(200).json(result);
@@ -90,8 +90,8 @@ exports.editBlog = (request, response) => {
     }
 
     Blogs.updateOne({ _id: request.body.blogId }, {
-            $set: request.body
-        })
+        $set: request.body
+    })
         .then(result => {
             if (result.modifiedCount == 1) {
                 if (request.file) {
