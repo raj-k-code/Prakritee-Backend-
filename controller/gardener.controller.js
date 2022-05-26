@@ -123,7 +123,7 @@ exports.updateProfile = (request, response) => {
     if (request.file)
         request.body.gardenerImage = "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
 
-    console.log(request.body.gardenerImage + "===========================")
+    console.log(request.body.gardenerImage + "=======================")
 
     Gardener.updateOne({
         _id: request.body.gardenerId,
