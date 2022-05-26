@@ -14,6 +14,8 @@ const key = "prakritee@123@05";
 const algo = "aes-256-cbc"
 
 exports.signup = (request, response) => {
+    console.log(request.body);
+
     const error = validationResult(request);
     if (!error.isEmpty()) {
         return response.status(400).json({ errors: error.array() });
@@ -55,6 +57,7 @@ exports.signup = (request, response) => {
             });
             return response.status(201).json(result)
         }).catch(err => {
+            console.log(err);
             return response.status(500).json({ message: "Internal Server Error..." })
         })
 }
