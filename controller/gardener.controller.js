@@ -14,6 +14,8 @@ const key = "prakritee@123@05";
 const algo = "aes-256-cbc"
 
 exports.signup = (request, response) => {
+    console.log(request.body);
+
     const error = validationResult(request);
     if (!error.isEmpty()) {
         return response.status(400).json({ errors: error.array() });
@@ -55,6 +57,7 @@ exports.signup = (request, response) => {
             });
             return response.status(201).json(result)
         }).catch(err => {
+            console.log(err);
             return response.status(500).json({ message: "Internal Server Error..." })
         })
 }
@@ -125,12 +128,12 @@ exports.updateProfile = (request, response) => {
     console.log(request.body.gardenerImage)
 
     Gardener.updateOne({
-            _id: request.body.gardenerId,
-            isVerify: true,
-            isBlock: false
-        }, {
-            $set: request.body
-        })
+        _id: request.body.gardenerId,
+        isVerify: true,
+        isBlock: false
+    }, {
+        $set: request.body
+    })
         .then(result => {
             if (result.modifiedCount == 1)
                 return response.status(201).json({ success: "Updated Successfolly" });
@@ -150,10 +153,10 @@ exports.verifyAccountPage = (request, response) => {
 exports.getVerifiedAccount = (request, response) => {
 
     Gardener.updateOne({ _id: request.params.id }, {
-            $set: {
-                isVerify: true
-            }
-        })
+        $set: {
+            isVerify: true
+        }
+    })
         .then(result => {
             if (result.modifiedCount == 1)
                 return response.status(200).render("success-page.ejs");
@@ -234,10 +237,10 @@ exports.gardenerList = (request, response) => {
 
 exports.blockGardener = (request, response) => {
     Gardener.updateOne({ _id: request.body.gardenerId }, {
-            $set: {
-                isBlock: true
-            }
-        })
+        $set: {
+            isBlock: true
+        }
+    })
         .then(result => {
             if (result.modifiedCount == 1) {
                 Gardener.findOne({ _id: request.body.gardenerId }).then(gardener => {
@@ -286,10 +289,10 @@ exports.blockGardener = (request, response) => {
 
 exports.unBlockGardener = (request, response) => {
     Gardener.updateOne({ _id: request.body.gardenerId }, {
-            $set: {
-                isBlock: false
-            }
-        })
+        $set: {
+            isBlock: false
+        }
+    })
         .then(result => {
             if (result.modifiedCount == 1) {
                 Gardener.findOne({ _id: request.body.gardenerId }).then(gardener => {
@@ -336,7 +339,7 @@ exports.unBlockGardener = (request, response) => {
         });
 }
 
-exports.rateTheGardener = async(request, response) => {
+exports.rateTheGardener = async (request, response) => {
 
     let gardener = await Gardener.findOne({ _id: request.body.gardenerId })
 
@@ -378,7 +381,7 @@ exports.rateTheGardener = async(request, response) => {
 
 }
 
-exports.bookTheGardener = async(request, response) => {
+exports.bookTheGardener = async (request, response) => {
     let booking = await Booking.findOne({ gardenerId: request.body.gardenerId });
 
     if (booking) {
@@ -498,7 +501,7 @@ exports.bookTheGardener = async(request, response) => {
     }
 }
 
-exports.approveRequest = async(request, response) => {
+exports.approveRequest = async (request, response) => {
     // Booking.updateOne(
     //     {$or:{ gardenerId: request.body.gardenerId, "bookRequests.userId": request.body.userId }},
     //     {
@@ -509,7 +512,7 @@ exports.approveRequest = async(request, response) => {
     console.log(request.body);
     var update;
     Booking.findOne({ gardenerId: request.body.gardenerId })
-        .then(async(result) => {
+        .then(async (result) => {
             if (result) {
 
                 for (let req of result.bookRequests) {
@@ -629,7 +632,7 @@ exports.approveRequest = async(request, response) => {
     // });
 }
 
-exports.cancelRequest = async(request, response) => {
+exports.cancelRequest = async (request, response) => {
     var update;
     if (request.body.userId)
         update = await Booking.updateOne({ gardenerId: request.body.gardenerId }, { $pull: { "bookRequests": { userId: request.body.userId } } }, { safe: true, multi: false });
