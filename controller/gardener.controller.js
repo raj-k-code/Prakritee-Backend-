@@ -126,7 +126,7 @@ exports.updateProfile = (request, response) => {
     if (request.file)
         request.body.gardenerImage = "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
 
-    console.log(request.body.gardenerImage + "===========================")
+    console.log(request.body.gardenerImage + "=======================")
 
     Gardener.updateOne({
         _id: request.body.gardenerId,
@@ -372,7 +372,7 @@ exports.rateTheGardener = async (request, response) => {
         });
         gardener.save().then(result => {
             if (result)
-                return response.status(200).json({ data: result, succes: "Rated Successfully" })
+                return response.status(200).json({ data: result, success: "Rated Successfully" })
             else
                 return response.status(200).json({ data: result, failed: "Not Rated Successfully" })
         }).catch(err => {
