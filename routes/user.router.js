@@ -19,16 +19,18 @@ var upload = multer({ storage: storage });
 router.post("/signup",
     body("userName").notEmpty(),
     body("userEmail").notEmpty().isEmail(),
-    body("userPassword").notEmpty().isLength(6),
+    body("userPassword").notEmpty().isLength(8),
     body("userMobile").notEmpty().isMobilePhone(),
     body("userAddress").notEmpty(),
 
     userController.signup
 );
 
+router.get("/check-email/:userEmail", userController.checkEmail);
+
 router.post("/signin",
     body("userEmail").notEmpty().isEmail(),
-    body("userPassword").notEmpty().isLength(6),
+    body("userPassword").notEmpty(),
     userController.signin
 );
 router.post("/signin-with-google",
