@@ -354,3 +354,20 @@ exports.unBlockUser = (request, response) => {
             return response.status(500).json({ error: "oops something went wrong" })
         });
 }
+
+
+exports.checkEmail = (request, response) => {
+    User
+        .findOne({ userEmail: request.params.userEmail })
+        .then(result => {
+            if (result) {
+                return response.status(200).json({ exist: true });
+            } else {
+                return response.status(200).json({ exist: false });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({ error: "something went wrong" });
+        });
+}
