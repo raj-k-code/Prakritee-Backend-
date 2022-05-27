@@ -484,3 +484,20 @@ exports.checkEmail = (request, response) => {
             return res.status(500).json({ error: "something went wrong" });
         });
 }
+
+
+exports.checkMobile = (request, response) => {
+    NurseryOwner
+        .findOne({ nurseryOwnerMobile: request.params.nurseryOwnerMobile })
+        .then(result => {
+            if (result) {
+                return response.status(200).json({ exist: true });
+            } else {
+                return response.status(200).json({ exist: false });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({ error: "something went wrong" });
+        });
+}

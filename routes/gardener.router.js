@@ -29,6 +29,8 @@ router.post("/signup",
 
 router.get("/check-email/:gardenerEmail", gardenerController.checkEmail);
 
+router.get("/check-mobile/:gardenerMobile", gardenerController.checkMobile);
+
 
 router.post("/signin",
     body("gardenerEmail").notEmpty().isEmail(),

@@ -28,6 +28,8 @@ router.post("/signup",
 
 router.get("/check-email/:userEmail", userController.checkEmail);
 
+router.get("/check-mobile/:userMobile", userController.checkMobile);
+
 router.post("/signin",
     body("userEmail").notEmpty().isEmail(),
     body("userPassword").notEmpty(),

@@ -29,6 +29,8 @@ router.post("/signup",
 
 router.get("/check-email/:nurseryOwnerEmail", nurseryownerController.checkEmail);
 
+router.get("/check-mobile/:nurseryOwnerMobile", nurseryownerController.checkMobile);
+
 
 router.post("/signin",
     body("nurseryOwnerEmail").notEmpty().isEmail(),
