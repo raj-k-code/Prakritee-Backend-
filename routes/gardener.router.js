@@ -19,7 +19,7 @@ var upload = multer({ storage: storage });
 router.post("/signup",
     body("gardenerName").notEmpty(),
     body("gardenerEmail").notEmpty().isEmail(),
-    body("gardenerPassword").notEmpty().isLength(6),
+    body("gardenerPassword").notEmpty().isLength(8),
     body("gardenerMobile").notEmpty().isMobilePhone(),
     body("gardenerAddress").notEmpty(),
     body("gardenerExperience").notEmpty(),
@@ -27,9 +27,12 @@ router.post("/signup",
     gardenerController.signup
 );
 
+router.get("/check-email/:gardenerEmail", gardenerController.checkEmail);
+
+
 router.post("/signin",
     body("gardenerEmail").notEmpty().isEmail(),
-    body("gardenerPassword").notEmpty().isLength(6),
+    body("gardenerPassword").notEmpty(),
     gardenerController.signin
 );
 

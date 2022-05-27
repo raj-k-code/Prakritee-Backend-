@@ -468,3 +468,19 @@ exports.nurseryById = (request, response) => {
             return res.status(500).json({ error: "something went wrong" });
         });
 };
+
+exports.checkEmail = (request, response) => {
+    NurseryOwner
+        .findOne({ nurseryOwnerEmail: request.params.nurseryOwnerEmail })
+        .then(result => {
+            if (result) {
+                return response.status(200).json({ exist: true });
+            } else {
+                return response.status(200).json({ exist: false });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({ error: "something went wrong" });
+        });
+}

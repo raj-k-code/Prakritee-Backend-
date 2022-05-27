@@ -706,3 +706,20 @@ exports.gardenerById = (request, response) => {
             return res.status(500).json({ error: "something went wrong" });
         });
 };
+
+
+exports.checkEmail = (request, response) => {
+    Gardener
+        .findOne({ gardenerEmail: request.params.gardenerEmail })
+        .then(result => {
+            if (result) {
+                return response.status(200).json({ exist: true });
+            } else {
+                return response.status(200).json({ exist: false });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({ error: "something went wrong" });
+        });
+}

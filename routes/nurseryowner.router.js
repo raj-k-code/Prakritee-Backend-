@@ -20,16 +20,19 @@ router.post("/signup",
     body("nurseryName").notEmpty(),
     body("nurseryOwnerName").notEmpty(),
     body("nurseryOwnerEmail").notEmpty().isEmail(),
-    body("nurseryOwnerPassword").notEmpty().isLength(6),
+    body("nurseryOwnerPassword").notEmpty().isLength(8),
     body("nurseryOwnerMobile").notEmpty().isMobilePhone(),
     body("nurseryAddress").notEmpty(),
 
     nurseryownerController.signup
 );
 
+router.get("/check-email/:nurseryOwnerEmail", nurseryownerController.checkEmail);
+
+
 router.post("/signin",
     body("nurseryOwnerEmail").notEmpty().isEmail(),
-    body("nurseryOwnerPassword").notEmpty().isLength(6),
+    body("nurseryOwnerPassword").notEmpty(),
     nurseryownerController.signin
 );
 
