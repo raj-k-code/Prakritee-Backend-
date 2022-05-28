@@ -384,14 +384,19 @@ exports.rateTheGardener = async (request, response) => {
 
 exports.bookTheGardener = async (request, response) => {
     let booking = await Booking.findOne({ gardenerId: request.body.gardenerId });
+    console.log(booking);
 
     if (booking) {
         for (i in booking.bookRequests) {
-            if (booking.bookRequests[i].userId == request.body.userId)
-                return response.status(200).json({ message: 'Already Requested This Gardener' });
 
-            if (booking.bookRequests[i].nurseryId == request.body.nurseryId)
-                return response.status(200).json({ message: 'Already Requested This Gardener' });
+            if (request.body.userId) {
+                if (booking.bookRequests[i].userId == request.body.userId)
+                    return response.status(200).json({ message: 'Already Requested This Gardener' });
+            }
+            else {
+                if (booking.bookRequests[i].nurseryId == request.body.nurseryId)
+                    return response.status(200).json({ message: 'Already Requested This Gardener' });
+            }
         }
 
         if (request.body.nurseryId)
