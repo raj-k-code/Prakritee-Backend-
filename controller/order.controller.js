@@ -217,8 +217,6 @@ exports.historyByNursery = (request, response) => {
                         else {
                             result[i].productList.splice(j, 1);
                         }
-
-
                     }
 
                     if (result[i].productList.length == 0) {
