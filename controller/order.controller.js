@@ -13,9 +13,9 @@ var instance = new Razorpay({
 
 exports.order = (request, response) => {
     instance.orders.create({
-            amount: request.body.total + "00",
-            currency: "INR",
-        },
+        amount: request.body.total + "00",
+        currency: "INR",
+    },
         (err, order) => {
             if (err) {
                 console.log(err);
@@ -209,9 +209,16 @@ exports.historyByNursery = (request, response) => {
 
                 for (var i = 0; i < result.length; i++) {
                     for (var j = 0; j < result[i].productList.length; j++) {
-                        if (result[i].productList[j].productId.createdBy != request.body.nurseryId) {
+                        if (result[i].productList[j].productId.createdBy != null) {
+                            if (result[i].productList[j].productId.createdBy != request.body.nurseryId) {
+                                result[i].productList.splice(j, 1);
+                            }
+                        }
+                        else {
                             result[i].productList.splice(j, 1);
                         }
+
+
                     }
 
                     if (result[i].productList.length == 0) {
@@ -235,7 +242,7 @@ exports.historyByNursery = (request, response) => {
 
 exports.latestOrder = (request, response) => {
     var regx = new RegExp(request.body.status, 'i');
-    
+
     orderModel
         .find({
             orderStatus: regx,
@@ -243,7 +250,7 @@ exports.latestOrder = (request, response) => {
         .populate("userId")
         .populate("productList.productId")
         .then((result) => {
-            if (result.length >0) {
+            if (result.length > 0) {
                 return response.status(200).json(result);
             } else {
                 return response.status(200).json({ message: "No Result Found" });
@@ -257,18 +264,18 @@ exports.latestOrder = (request, response) => {
 };
 
 
-exports.changeOrderStatus = (request, response) => {    
+exports.changeOrderStatus = (request, response) => {
     orderModel
         .updateOne({ _id: request.body.orderId }, {
             $set: {
-                orderStatus : request.body.status 
+                orderStatus: request.body.status
             }
         })
         .then((result) => {
             console.log(result);
 
             if (result.modifiedCount == 1) {
-                return response.status(200).json({success: "Changed Successfully"});
+                return response.status(200).json({ success: "Changed Successfully" });
             } else {
                 return response.status(200).json({ failed: "Not Changed" });
             }
