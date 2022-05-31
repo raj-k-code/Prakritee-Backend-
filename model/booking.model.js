@@ -26,7 +26,16 @@ const bookingSchema = new mongoose.Schema({
             type: Date,
             default: Date.now
         }
-    }]
+    }],
+    query: {
+        type: String,
+        required: true
+    },
+    isDone: {
+        type: Boolean,
+        default: false
+    }
+
 });
 
 module.exports = mongoose.model("booking", bookingSchema);

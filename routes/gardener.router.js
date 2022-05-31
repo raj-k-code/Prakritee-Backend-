@@ -79,4 +79,6 @@ router.post("/view-request", gardenerController.viewRequest);
 
 router.get("/gardner-by-id/:gardenerId", gardenerController.gardenerById);
 
+router.post("/already-exist", gardenerController.alreadyExist);
+
 module.exports = router;

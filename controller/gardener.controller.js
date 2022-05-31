@@ -507,6 +507,21 @@ exports.bookTheGardener = async (request, response) => {
     }
 }
 
+exports.alreadyExist = (request, response) => {
+    Booking.findOne({ gardenerId: request.body.gardenerId, 'bookRequests.userId': request.body.userId })
+        .then(result => {
+            if (result) {
+                return response.status(200).json({ exist: true });
+            }
+            else {
+                return response.status(200).json({ exist: false });
+            }
+        })
+        .catch(err => {
+            return response.status(500).json({ error: 'Internal Server Error' });
+        });
+}
+
 exports.approveRequest = async (request, response) => {
     // Booking.updateOne(
     //     {$or:{ gardenerId: request.body.gardenerId, "bookRequests.userId": request.body.userId }},
