@@ -1,7 +1,7 @@
 const { response } = require("express");
 const Cart = require("../model/cart.model");
 
-exports.addToCart = async(request, response) => {
+exports.addToCart = async (request, response) => {
     let cart = await Cart.findOne({ userId: request.body.userId });
 
     if (cart) {
@@ -55,18 +55,18 @@ exports.view = (request, response) => {
 exports.removeProduct = (request, response) => {
     console.log(request.body);
     Cart.updateOne({ userId: request.body.userId }, {
-            $pullAll: {
-                productList: [
-                    request.body.productId
-                ]
-            }
-        }).then(result => {
-            if (result.modifiedCount == 1)
-                return response.status(200).json(result);
-            else
-                console.log(result)
-            return response.status(200).json({ message: "Not Removed" });
-        })
+        $pullAll: {
+            productList: [
+                request.body.productId
+            ]
+        }
+    }).then(result => {
+        if (result.modifiedCount == 1)
+            return response.status(200).json(result);
+        else
+            console.log(result)
+        return response.status(200).json({ message: "Not Removed" });
+    })
         .catch(err => {
             return response.status(500).json(err);
         })
