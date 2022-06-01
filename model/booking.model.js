@@ -17,7 +17,9 @@ const bookingSchema = new mongoose.Schema({
             ref: "nurseryOwner",
             default: null
         },
-
+        query: {
+            type: String
+        },
         isApproved: {
             type: Boolean,
             default: false
@@ -25,16 +27,12 @@ const bookingSchema = new mongoose.Schema({
         date: {
             type: Date,
             default: Date.now
+        },
+        isDone: {
+            type: Boolean,
+            default: false
         }
-    }],
-    query: {
-        type: String,
-        required: true
-    },
-    isDone: {
-        type: Boolean,
-        default: false
-    }
+    }]
 
 });
 

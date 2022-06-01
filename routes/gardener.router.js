@@ -73,6 +73,8 @@ router.post("/book-gardener", gardenerController.bookTheGardener);
 
 router.post("/approve-request", gardenerController.approveRequest);
 
+router.post("/complete-request", gardenerController.completeRequest);
+
 router.post("/cancel-request", gardenerController.cancelRequest);
 
 router.post("/view-request", gardenerController.viewRequest);
