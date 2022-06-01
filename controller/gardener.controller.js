@@ -511,19 +511,35 @@ exports.bookTheGardener = async (request, response) => {
     }
 }
 
-exports.alreadyExist = (request, response) => {
-    Booking.findOne({ gardenerId: request.body.gardenerId, 'bookRequests.userId': request.body.userId })
-        .then(result => {
-            if (result) {
-                return response.status(200).json({ exist: true });
-            }
-            else {
-                return response.status(200).json({ exist: false });
-            }
-        })
-        .catch(err => {
-            return response.status(500).json({ error: 'Internal Server Error' });
-        });
+exports.alreadyExist = async (request, response) => {
+    var data;
+
+    if (request.body.nurseryId) {
+        data = await Booking.findOne({ gardenerId: request.body.gardenerId, 'bookRequests.nurseryId': request.body.nurseryId });
+    }
+    else {
+        data = await Booking.findOne({ gardenerId: request.body.gardenerId, 'bookRequests.userId': request.body.userId });
+    }
+
+    console.log(data)
+
+    if (data) {
+        return response.status(200).json({ exist: true });
+    }
+    else {
+        return response.status(200).json({ exist: false });
+    }
+    //     .then(result => {
+    //     if (result) {
+    //         return response.status(200).json({ exist: true });
+    //     }
+    //     else {
+    //         return response.status(200).json({ exist: false });
+    //     }
+    // })
+    //     .catch(err => {
+    //         return response.status(500).json({ error: 'Internal Server Error' });
+    //     });
 }
 
 exports.approveRequest = async (request, response) => {
