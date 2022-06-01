@@ -79,6 +79,8 @@ router.post("/cancel-request", gardenerController.cancelRequest);
 
 router.post("/view-request", gardenerController.viewRequest);
 
+router.get("/view-all-request", gardenerController.viewAllRequest);
+
 router.get("/gardner-by-id/:gardenerId", gardenerController.gardenerById);
 
 router.post("/already-exist", gardenerController.alreadyExist);

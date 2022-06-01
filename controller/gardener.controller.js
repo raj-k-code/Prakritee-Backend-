@@ -708,6 +708,18 @@ exports.viewRequest = (request, response) => {
     })
 }
 
+exports.viewAllRequest = (request, response) => {
+    Booking.find().populate('bookRequests.userId').populate('bookRequests.nurseryId').populate('gardenerId').then(result => {
+        if (result) {
+            return response.status(201).json(result)
+        } else {
+            return response.status(201).json({ message: "Result Not Found" })
+        }
+    }).catch(err => {
+        return response.status(500).json({ error: "oops something went wrong" })
+    })
+}
+
 
 exports.gardenerById = (request, response) => {
     Gardener
