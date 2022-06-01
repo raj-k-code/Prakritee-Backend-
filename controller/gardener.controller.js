@@ -384,7 +384,7 @@ exports.rateTheGardener = async (request, response) => {
 
 exports.bookTheGardener = async (request, response) => {
     let booking = await Booking.findOne({ gardenerId: request.body.gardenerId });
-    console.log(booking);
+    console.log(request.body.query);
 
     if (booking) {
         for (i in booking.bookRequests) {
@@ -399,11 +399,15 @@ exports.bookTheGardener = async (request, response) => {
             }
         }
 
-        if (request.body.nurseryId)
-            await booking.bookRequests.push({ nurseryId: request.body.nurseryId });
-        else
-            await booking.bookRequests.push({ userId: request.body.userId });
+        if (request.body.nurseryId) {
+            await booking.bookRequests.push({ query: request.body.query, nurseryId: request.body.nurseryId });
+            console.log("Inside if");
+        }
+        else {
+            await booking.bookRequests.push({ query: request.body.query, userId: request.body.userId });
+            console.log("Inside else....")
 
+        }
         booking.save()
             .then(result => {
                 console.log(result);
@@ -455,9 +459,9 @@ exports.bookTheGardener = async (request, response) => {
         newBooking.gardenerId = await request.body.gardenerId;
 
         if (request.body.nurseryId)
-            await newBooking.bookRequests.push({ nurseryId: request.body.nurseryId });
+            await newBooking.bookRequests.push({ query: request.body.query, nurseryId: request.body.nurseryId });
         else
-            await newBooking.bookRequests.push({ userId: request.body.userId });
+            await newBooking.bookRequests.push({ query: request.body.query, userId: request.body.userId });
 
         newBooking.save()
             .then(result => {
@@ -523,13 +527,6 @@ exports.alreadyExist = (request, response) => {
 }
 
 exports.approveRequest = async (request, response) => {
-    // Booking.updateOne(
-    //     {$or:{ gardenerId: request.body.gardenerId, "bookRequests.userId": request.body.userId }},
-    //     {
-    //         $set: {
-    //             "bookRequests.$.isApproved": true
-    //         }
-    //     })
     console.log(request.body);
     var update;
     Booking.findOne({ gardenerId: request.body.gardenerId })
@@ -595,62 +592,47 @@ exports.approveRequest = async (request, response) => {
             console.log(err);
             return response.status(500).json({ error: "Internal Server Error" });
         });
+}
 
+exports.completeRequest = (request, response) => {
+    console.log(request.body);
+    var update;
+    Booking.findOne({ gardenerId: request.body.gardenerId })
+        .then(async (result) => {
+            if (result) {
+                for (let req of result.bookRequests) {
+                    if (req.userId == request.body.userId) {
+                        console.log("inside If===============")
+                        update = await Booking.updateOne({ gardenerId: request.body.gardenerId, "bookRequests.userId": request.body.userId }, {
+                            $set: {
+                                "bookRequests.$.isDone": true
+                            }
+                        });
+                    } else if (req.nurseryId == request.body.nurseryId) {
+                        console.log("inside else===============")
 
+                        update = await Booking.updateOne({ gardenerId: request.body.gardenerId, "bookRequests.nurseryId": request.body.nurseryId }, {
+                            $set: {
+                                "bookRequests.$.isDone": true
+                            }
+                        });
+                    }
+                }
+                console.log(update.modifiedCount)
+                if (update.modifiedCount == 1) {
+                    return response.status(200).json({ success: "Response Sent update-else" });
+                } else {
+                    return response.status(200).json({ failed: "Record Not Found result else" });
+                }
 
-
-
-
-
-
-
-
-
-
-
-    //         User.findOne({ _id: request.body.userId }).then(user => {
-    //             if (user) {
-    //                 let transporter = nodemailer.createTransport({
-    //                     host: "smtp.gmail.com",
-    //                     port: 587,
-    //                     secure: false,
-    //                     requireTLS: true,
-    //                     auth: {
-    //                         user: "bidauction23@gmail.com",
-    //                         pass: "brainforcode",
-    //                     },
-    //                 });
-
-    //                 var message = {
-    //                     from: "bidauction23@gmail.com",
-    //                     to: user.userEmail,
-    //                     subject: "🎉 Approval 🎉",
-    //                     html: '<p>Your request is approved by the Gardener.Please go to our website to contact him quickly</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
-    //                 };
-
-    //                 transporter.sendMail(message, (err, info) => {
-    //                     if (err) {
-    //                         console.log(err);
-    //                     } else {
-    //                         console.log("SUCCESS===================================\n" + info);
-    //                     }
-    //                 });
-
-    //                 return response.status(200).json({ success: "Response Sent" });
-    //             } else
-    //                 return response.status(201).json({ failed: "Response Sent But Notification didin't" });
-
-
-    //         }).catch(err => {
-    //             return response.status(500).json({ error: "oops something went wrong" })
-    //         })
-    //     } else {
-    //         return response.status(200).json({ failed: "Not Approved" });
-    //     }
-    // }).catch(err => {
-    //     console.log(err);
-    //     return response.status(500).json({ error: "Internal Server Error" });
-    // });
+            } else {
+                return response.status(200).json({ failed: "Record Not Found" });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            return response.status(500).json({ error: "Internal Server Error" });
+        });
 }
 
 exports.cancelRequest = async (request, response) => {
@@ -699,7 +681,7 @@ exports.cancelRequest = async (request, response) => {
 }
 
 exports.viewRequest = (request, response) => {
-    Booking.findOne({ gardenerId: request.body.gardenerId }).populate('bookRequests.userId').populate('bookRequests.nurseryId').populate('gardenerId').then(result => {
+    Booking.findOne({ gardenerId: request.body.gardenerId }).sort({ _id: -1 }).populate('bookRequests.userId').populate('bookRequests.nurseryId').populate('gardenerId').then(result => {
         if (result) {
             return response.status(201).json(result)
         } else {
