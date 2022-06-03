@@ -33,20 +33,20 @@ exports.delete = (request, response, next) => {
                     secure: false,
                     requireTLS: true,
                     auth: {
-                        user: "bidauction23@gmail.com",
-                        pass: "brainforcode",
+                        user: "thegreenland.prakriti@gmail.com",
+                        pass: "prakriti@123",
                     },
                 });
 
                 var message = {
-                    from: "bidauction23@gmail.com",
+                    from: "thegreenland.prakriti@gmail.com",
                     to: request.body.email,
                     subject: "Query Is Rejected By Admin",
                     text: "Sorry Your Query Is Without Sense."
                 };
 
                 transporter.sendMail(message, (err, info) => {
-                    if (err) {} else {}
+                    if (err) { } else { }
                 });
                 return response.status(201).json({ Delete: "Deleted Successfully" });
             } else
@@ -83,13 +83,13 @@ exports.responseQuery = (request, response) => {
         secure: false,
         requireTLS: true,
         auth: {
-            user: "bidauction23@gmail.com",
-            pass: "brainforcode",
+            user: "thegreenland.prakriti@gmail.com",
+            pass: "prakriti@123",
         },
     });
 
     var message = {
-        from: "bidauction23@gmail.com",
+        from: "thegreenland.prakriti@gmail.com",
         to: request.body.email,
         subject: "Response On Your Query",
         text: request.body.message
