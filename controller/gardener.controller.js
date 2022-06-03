@@ -36,13 +36,13 @@ exports.signup = (request, response) => {
                 secure: false,
                 requireTLS: true,
                 auth: {
-                    user: "bidauction23@gmail.com",
-                    pass: "brainforcode",
+                    user: "thegreenland.prakriti@gmail.com",
+                    pass: "prakriti@123",
                 },
             });
 
             var message = {
-                from: "bidauction23@gmail.com",
+                from: "thegreenland.prakriti@gmail.com",
                 to: result.gardenerEmail,
                 subject: "Confirm your account on Prakritee",
                 html: '<p>you are a nice person for signing up with Prakritee! You must follow this link within 30 days of registration to activate your account:</p><a href= "https://prakritee-user.herokuapp.com/gardener/verify-account/' + result._id + '">click here</a><p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
@@ -186,13 +186,13 @@ exports.forgotPassword = (request, response) => {
                 secure: false,
                 requireTLS: true,
                 auth: {
-                    user: "bidauction23@gmail.com",
-                    pass: "brainforcode",
+                    user: "thegreenland.prakriti@gmail.com",
+                    pass: "prakriti@123",
                 },
             });
 
             var message = {
-                from: "bidauction23@gmail.com",
+                from: "thegreenland.prakriti@gmail.com",
                 to: result.gardenerEmail,
                 subject: "Message Form Prakritee",
                 html: `
@@ -252,13 +252,13 @@ exports.blockGardener = (request, response) => {
                             secure: false,
                             requireTLS: true,
                             auth: {
-                                user: "bidauction23@gmail.com",
-                                pass: "brainforcode",
+                                user: "thegreenland.prakriti@gmail.com",
+                                pass: "prakriti@123",
                             },
                         });
 
                         var message = {
-                            from: "bidauction23@gmail.com",
+                            from: "thegreenland.prakriti@gmail.com",
                             to: gardener.gardenerEmail,
                             subject: "🚨 Alert From Prakritee 🚨",
                             html: '<p>Your account is blocked by the Prakritee Admin</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
@@ -304,13 +304,13 @@ exports.unBlockGardener = (request, response) => {
                             secure: false,
                             requireTLS: true,
                             auth: {
-                                user: "bidauction23@gmail.com",
-                                pass: "brainforcode",
+                                user: "thegreenland.prakriti@gmail.com",
+                                pass: "prakriti@123",
                             },
                         });
 
                         var message = {
-                            from: "bidauction23@gmail.com",
+                            from: "thegreenland.prakriti@gmail.com",
                             to: gardener.gardenerEmail,
                             subject: "🎉 Alert From Prakritee 🎉",
                             html: '<p>Your account is Unblocked by the Prakritee Admin. Now you can signin in Prakritee.com</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
@@ -420,13 +420,13 @@ exports.bookTheGardener = async (request, response) => {
                             secure: false,
                             requireTLS: true,
                             auth: {
-                                user: "bidauction23@gmail.com",
-                                pass: "brainforcode",
+                                user: "thegreenland.prakriti@gmail.com",
+                                pass: "prakriti@123",
                             },
                         });
 
                         var message = {
-                            from: "bidauction23@gmail.com",
+                            from: "thegreenland.prakriti@gmail.com",
                             to: gardener.gardenerEmail,
                             subject: "🎉 New Request 🎉",
                             html: '<p>We Have Find A New Work Opportunity For You.Please Go To Our Website to Responsed</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
@@ -475,13 +475,13 @@ exports.bookTheGardener = async (request, response) => {
                             secure: false,
                             requireTLS: true,
                             auth: {
-                                user: "bidauction23@gmail.com",
-                                pass: "brainforcode",
+                                user: "thegreenland.prakriti@gmail.com",
+                                pass: "prakriti@123",
                             },
                         });
 
                         var message = {
-                            from: "bidauction23@gmail.com",
+                            from: "thegreenland.prakriti@gmail.com",
                             to: gardener.gardenerEmail,
                             subject: "🎉 New Request 🎉",
                             html: '<p>We Have Find A New Work Opportunity For You.Please Go To Our Website to Responsed</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
@@ -559,13 +559,13 @@ exports.approveRequest = async (request, response) => {
                         secure: false,
                         requireTLS: true,
                         auth: {
-                            user: "bidauction23@gmail.com",
-                            pass: "brainforcode",
+                            user: "thegreenland.prakriti@gmail.com",
+                            pass: "prakriti@123",
                         },
                     });
 
                     var message = {
-                        from: "bidauction23@gmail.com",
+                        from: "thegreenland.prakriti@gmail.com",
                         to: request.body.email,
                         subject: "🎉 Approval 🎉",
                         html: '<p>Your request is approved by the Gardener.Please go to our website to contact him quickly</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
@@ -650,13 +650,13 @@ exports.cancelRequest = async (request, response) => {
             secure: false,
             requireTLS: true,
             auth: {
-                user: "bidauction23@gmail.com",
-                pass: "brainforcode",
+                user: "thegreenland.prakriti@gmail.com",
+                pass: "prakriti@123",
             },
         });
 
         var message = {
-            from: "bidauction23@gmail.com",
+            from: "thegreenland.prakriti@gmail.com",
             to: request.body.email,
             subject: " Rejected ",
             html: '<p>Your request is rejected by the Gardener.Please go to our website to see more gardeners</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',

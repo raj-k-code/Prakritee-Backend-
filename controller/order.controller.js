@@ -38,13 +38,13 @@ exports.order = (request, response) => {
                                         secure: false,
                                         requireTLS: true,
                                         auth: {
-                                            user: "bidauction23@gmail.com",
-                                            pass: "brainforcode",
+                                            user: "thegreenland.prakriti@gmail.com",
+                                            pass: "prakriti@123",
                                         },
                                     });
 
                                     var message = {
-                                        from: "bidauction23@gmail.com",
+                                        from: "thegreenland.prakriti@gmail.com",
                                         to: user.userEmail,
                                         subject: "Your Order Is Placed",
                                         html: `
@@ -89,13 +89,13 @@ exports.order = (request, response) => {
                                         secure: false,
                                         requireTLS: true,
                                         auth: {
-                                            user: "bidauction23@gmail.com",
-                                            pass: "brainforcode",
+                                            user: "thegreenland.prakriti@gmail.com",
+                                            pass: "prakriti@123",
                                         },
                                     });
 
                                     var message = {
-                                        from: "bidauction23@gmail.com",
+                                        from: "thegreenland.prakriti@gmail.com",
                                         to: gardener.gardenerEmail,
                                         subject: "Your Order Is Placed",
                                         html: `
