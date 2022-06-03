@@ -51,5 +51,5 @@ mongoose
     });
 
 app.listen(port, () => {
-    console.log("-----------SERVER IS STARTED-----------");
+    console.log("-----------SERVER IS STARTED----------");
 });
