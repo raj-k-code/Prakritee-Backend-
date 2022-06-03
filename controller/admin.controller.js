@@ -61,9 +61,9 @@ exports.addCategory = (request, response) => {
     }
 
     Category.create({
-            categoryName: request.body.categoryName,
-            categoryImage: "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
-        })
+        categoryName: request.body.categoryName,
+        categoryImage: "https://firebasestorage.googleapis.com/v0/b/prakriti-3d8ad.appspot.com/o/" + request.file.filename + "?alt=media&token=abcddcba"
+    })
         .then(result => {
             return response.status(200).json(result);
         })
@@ -129,11 +129,11 @@ exports.editCategory = (request, response) => {
     }
 
     Category.updateOne({ _id: request.body.categeryId }, {
-            $set: {
-                categoryName: request.body.categoryName,
-                categoryImage: request.body.categoryImage
-            }
-        })
+        $set: {
+            categoryName: request.body.categoryName,
+            categoryImage: request.body.categoryImage
+        }
+    })
         .then(result => {
             if (result.modifiedCount == 1) {
                 if (request.file) {
@@ -210,13 +210,13 @@ exports.forgotPassword = (request, response) => {
                 secure: false,
                 requireTLS: true,
                 auth: {
-                    user: "bidauction23@gmail.com",
-                    pass: "brainforcode",
+                    user: "thegreenland.prakriti@gmail.com",
+                    pass: "prakriti@123",
                 },
             });
 
             var message = {
-                from: "bidauction23@gmail.com",
+                from: "thegreenland.prakriti@gmail.com",
                 to: result.email,
                 subject: "Message Form Prakritee",
                 html: `

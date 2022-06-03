@@ -29,13 +29,13 @@ exports.signup = (request, response) => {
                 secure: false,
                 requireTLS: true,
                 auth: {
-                    user: "bidauction23@gmail.com",
-                    pass: "brainforcode",
+                    user: "thegreenland.prakriti@gmail.com",
+                    pass: "prakriti@123",
                 },
             });
 
             var message = {
-                from: "bidauction23@gmail.com",
+                from: "thegreenland.prakriti@gmail.com",
                 to: result.nurseryOwnerEmail,
                 subject: "Confirm your account on Prakritee",
                 html: '<p>you are a nice person for signing up with Prakritee! You must follow this link within 30 days of registration to activate your account:</p><a href= "http://localhost:3000/nurseryowner/verify-account/' + result._id + '">click here</a><p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
@@ -184,13 +184,13 @@ exports.forgotPassword = (request, response) => {
                 secure: false,
                 requireTLS: true,
                 auth: {
-                    user: "bidauction23@gmail.com",
-                    pass: "brainforcode",
+                    user: "thegreenland.prakriti@gmail.com",
+                    pass: "prakriti@123",
                 },
             });
 
             var message = {
-                from: "bidauction23@gmail.com",
+                from: "thegreenland.prakriti@gmail.com",
                 to: result.nurseryOwnerEmail,
                 subject: "Message Form Prakritee",
                 html: `
@@ -364,13 +364,13 @@ exports.blockNursery = (request, response) => {
                             secure: false,
                             requireTLS: true,
                             auth: {
-                                user: "bidauction23@gmail.com",
-                                pass: "brainforcode",
+                                user: "thegreenland.prakriti@gmail.com",
+                                pass: "prakriti@123",
                             },
                         });
 
                         var message = {
-                            from: "bidauction23@gmail.com",
+                            from: "thegreenland.prakriti@gmail.com",
                             to: nurseryowner.nurseryOwnerEmail,
                             subject: "🚨 Alert From Prakritee 🚨",
                             html: '<p>Your account is blocked by the Prakritee Admin</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
@@ -416,13 +416,13 @@ exports.unBlockNursery = (request, response) => {
                             secure: false,
                             requireTLS: true,
                             auth: {
-                                user: "bidauction23@gmail.com",
-                                pass: "brainforcode",
+                                user: "thegreenland.prakriti@gmail.com",
+                                pass: "prakriti@123",
                             },
                         });
 
                         var message = {
-                            from: "bidauction23@gmail.com",
+                            from: "thegreenland.prakriti@gmail.com",
                             to: nurseryowner.nurseryOwnerEmail,
                             subject: "🎉 Alert From Prakritee 🎉",
                             html: '<p>Your account is Unblocked by the Prakritee Admin. Now you can signin in Prakritee.com</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
