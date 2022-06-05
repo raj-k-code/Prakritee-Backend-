@@ -143,7 +143,7 @@ exports.updateProfile = (request, response) => {
 
 exports.verifyAccountPage = (request, response) => {
     return response.status(200).render("verify-account.ejs", {
-        apiUrl: "http://localhost:3000/nurseryowner/get-verified-account/" + request.params.id
+        apiUrl: "https://prakritee.herokuapp.com/nurseryowner/get-verified-account/" + request.params.id
     });
 }
 
