@@ -157,7 +157,7 @@ exports.updateProfile = (request, response) => {
 
 exports.verifyAccountPage = (request, response) => {
     return response.status(200).render("verify-account.ejs", {
-        apiUrl: "https://prakritee-user.herokuapp.com/user/get-verified-account/" + request.params.id
+        apiUrl: "https://prakritee.herokuapp.com/user/get-verified-account/" + request.params.id
     });
 }
 
