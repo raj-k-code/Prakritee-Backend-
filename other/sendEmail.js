@@ -7,7 +7,7 @@ module.exports = class Email {
     static sendMail(userEmail, subject, content) {
         return new Promise((resolve, reject) => {
             const apiKey = client.authentications['api-key'];
-            apiKey.apiKey = "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"
+            apiKey.apiKey = "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"
 
             const tranEmailApi = new Sib.TransactionalEmailsApi()
             const sender = {
