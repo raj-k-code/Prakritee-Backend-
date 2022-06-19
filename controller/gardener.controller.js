@@ -57,7 +57,7 @@ exports.signup = (request, response) => {
             //     }
             // });
 
-            var flag = await Email.sendMail(result.gardenerEmail, "Verify Your Gmail Account", `<p>you are a nice person for signing up with Prakritee! You must follow this link within 30 days of registration to activate your account:</p><a href= "https://prakritee-user.herokuapp.com/gardener/verify-account/` + result._id + `">click here</a>`);
+            var flag = await Email.sendMail(result.gardenerEmail, "Verify Your Gmail Account", `<p>you are a nice person for signing up with Prakritee! You must follow this link within 30 days of registration to activate your account:</p><a href= "https://prakritee.herokuapp.com/gardener/verify-account/` + result._id + `">click here</a>`);
 
             return response.status(201).json(result)
         }).catch(err => {
