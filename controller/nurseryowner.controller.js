@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const { response } = require("express");
 const crypto = require('crypto');
+const Email = require('../other/sendEmail');
 
 const key = "prakritee@123@05";
 const algo = "aes-256-cbc"
@@ -22,32 +23,35 @@ exports.signup = (request, response) => {
     request.body.nurseryOwnerPassword = crypted;
 
     NurseryOwner.create(request.body)
-        .then(result => {
-            let transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 587,
-                secure: false,
-                requireTLS: true,
-                auth: {
-                    user: "thegreenland.prakriti@gmail.com",
-                    pass: "prakriti@123",
-                },
-            });
+        .then(async result => {
+            // let transporter = nodemailer.createTransport({
+            //     host: "smtp.gmail.com",
+            //     port: 587,
+            //     secure: false,
+            //     requireTLS: true,
+            //     auth: {
+            //         user: "thegreenland.prakriti@gmail.com",
+            //         pass: "prakriti@123",
+            //     },
+            // });
 
-            var message = {
-                from: "thegreenland.prakriti@gmail.com",
-                to: result.nurseryOwnerEmail,
-                subject: "Confirm your account on Prakritee",
-                html: '<p>you are a nice person for signing up with Prakritee! You must follow this link within 30 days of registration to activate your account:</p><a href= "http://localhost:3000/nurseryowner/verify-account/' + result._id + '">click here</a><p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
-            };
+            // var message = {
+            //     from: "thegreenland.prakriti@gmail.com",
+            //     to: result.nurseryOwnerEmail,
+            //     subject: "Confirm your account on Prakritee",
+            //     html: '<p>you are a nice person for signing up with Prakritee! You must follow this link within 30 days of registration to activate your account:</p><a href= "http://localhost:3000/nurseryowner/verify-account/' + result._id + '">click here</a><p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+            // };
 
-            transporter.sendMail(message, (err, info) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("SUCCESS===================================\n" + info);
-                }
-            });
+            // transporter.sendMail(message, (err, info) => {
+            //     if (err) {
+            //         console.log(err);
+            //     } else {
+            //         console.log("SUCCESS===================================\n" + info);
+            //     }
+            // });
+
+            var flag = await Email.sendMail(result.nurseryOwnerEmail, "Verify Your Gmail Account", `<p>you are a nice person for signing up with Prakritee! You must follow this link within 30 days of registration to activate your account:</p><a href= "https://prakritee-user.herokuapp.com/nurseryowner/verify-account/` + result._id + `">click here</a>`);
+
             return response.status(201).json(result)
         }).catch(err => {
             console.log(err);
@@ -156,7 +160,7 @@ exports.getVerifiedAccount = (request, response) => {
     })
         .then(result => {
             if (result.modifiedCount == 1)
-                return response.status(200).render("success-page.ejs");
+                return response.status(200).render("success-page-nursery.ejs");
             else
                 return response.status(201).json({ failed: "Something went wrong" });
         })
@@ -169,47 +173,55 @@ exports.getVerifiedAccount = (request, response) => {
 exports.forgotPassword = (request, response) => {
     NurseryOwner.findOne({
         nurseryOwnerEmail: request.body.nurseryOwnerEmail
-    }).then(result => {
+    }).then(async result => {
         if (result) {
             var decipher = crypto.createDecipher(algo, key)
             var dec = decipher.update(result.nurseryOwnerPassword, 'hex', 'utf8')
             dec += decipher.final('utf8');
             result.nurseryOwnerPassword = dec;
 
-            console.log(result.nurseryOwnerPassword)
+            // let transporter = nodemailer.createTransport({
+            //     host: "smtp.gmail.com",
+            //     port: 587,
+            //     secure: false,
+            //     requireTLS: true,
+            //     auth: {
+            //         user: "thegreenland.prakriti@gmail.com",
+            //         pass: "prakriti@123",
+            //     },
+            // });
 
-            let transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 587,
-                secure: false,
-                requireTLS: true,
-                auth: {
-                    user: "thegreenland.prakriti@gmail.com",
-                    pass: "prakriti@123",
-                },
-            });
+            // var message = {
+            //     from: "thegreenland.prakriti@gmail.com",
+            //     to: result.nurseryOwnerEmail,
+            //     subject: "Message Form Prakritee",
+            //     html: `
+            //      <p>Your old password is here 👇🏻</p>
+            //      <br>
+            //      <h3>PASSWORD: ` + result.nurseryOwnerPassword + `</h3>
+            //      <br>
+            //      <p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>
+            //      `
+            // };
 
-            var message = {
-                from: "thegreenland.prakriti@gmail.com",
-                to: result.nurseryOwnerEmail,
-                subject: "Message Form Prakritee",
-                html: `
+            // transporter.sendMail(message, (err, info) => {
+            //     if (err) {
+            //         console.log(err);
+            //     } else {
+            //         console.log("SUCCESS===================================\n" + info);
+            //     }
+            // });
+
+            var flag = await Email.sendMail(result.nurseryOwnerEmail, "Forgot Password", `
                  <p>Your old password is here 👇🏻</p>
                  <br>
                  <h3>PASSWORD: ` + result.nurseryOwnerPassword + `</h3>
-                 <br>
-                 <p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>
-                 `
-            };
+                 `);
 
-            transporter.sendMail(message, (err, info) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("SUCCESS===================================\n" + info);
-                }
-            });
-            return response.status(200).json({ success: "check your email", result: result });
+            if (flag)
+                return response.status(200).json({ success: "check your email", result: result });
+            else
+                return response.status(200).json({ message: "Please try again later" })
         } else {
             return response.status(200).json({ message: "No User Found With This Email Address" })
         }
@@ -260,43 +272,51 @@ exports.nurseryRequestApprove = (request, response) => {
         $set: {
             isApproved: true
         }
-    }).then(result => {
+    }).then(async result => {
         if (result.modifiedCount == 1) {
-            let transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 587,
-                secure: false,
-                requireTLS: true,
-                auth: {
-                    user: "thegreenland.prakriti@gmail.com",
-                    pass: "prakriti@123",
-                },
-            });
+            // let transporter = nodemailer.createTransport({
+            //     host: "smtp.gmail.com",
+            //     port: 587,
+            //     secure: false,
+            //     requireTLS: true,
+            //     auth: {
+            //         user: "thegreenland.prakriti@gmail.com",
+            //         pass: "prakriti@123",
+            //     },
+            // });
 
-            var message = {
-                from: "thegreenland.prakriti@gmail.com",
-                to: request.body.nurseryOwnerEmail,
-                subject: "🎉 Message Form Prakritee 🎉",
-                html: `
-                 <p>Your Nursery Is Verified By The Admin. This is Your Dashboard 👇🏻</p>
+            // var message = {
+            //     from: "thegreenland.prakriti@gmail.com",
+            //     to: request.body.nurseryOwnerEmail,
+            //     subject: "🎉 Message Form Prakritee 🎉",
+            //     html: `
+            //      <p>Your Nursery Is Verified By The Admin. This is Your Dashboard 👇🏻</p>
+            //      <br>
+            //      <a href="http://localhost:4200">Click Here</a>
+            //      <br>
+            //      <p>Hurry up go through this link and login and grow your business .Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">thegreenland.prakriti@gmail.com</a>
+            //      `
+            // };
+
+            // transporter.sendMail(message, (err, info) => {
+            //     if (err) {
+            //         console.log(err);
+            //     } else {
+            //         console.log("SUCCESS===================================\n" + info);
+            //     }
+            // });
+
+            var flag = await Email.sendMail(request.body.nurseryOwnerEmail, "🎉 Message Form Prakritee 🎉", `<p>Your Nursery Is Verified By The Admin. This is Your Dashboard 👇🏻</p>
                  <br>
-                 <a href="http://localhost:4200">Click Here</a>
+                 <a href="https://prakriti-dashboard.herokuapp.com">Click Here</a>
                  <br>
-                 <p>Hurry up go through this link and login and grow your business .Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">thegreenland.prakriti@gmail.com</a>
-                 `
-            };
+                 <p>Hurry up go through this link and login and grow your business.</p>`);
 
-            transporter.sendMail(message, (err, info) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("SUCCESS===================================\n" + info);
-                }
-            });
-
-            return response.status(201).json({ success: "Successfully Approved" })
+            if (flag)
+                return response.status(201).json({ success: "Successfully Approved" })
+            else
+                return response.status(201).json({ message: "Successfully Approved but didn't notify the owner" })
         } else {
-            console.log(result)
             return response.status(201).json({ failed: "Not Approved" })
         }
     }).catch(err => {
@@ -306,39 +326,48 @@ exports.nurseryRequestApprove = (request, response) => {
 
 exports.nurseryRequestCancel = (request, response) => {
     NurseryOwner.deleteOne({ _id: request.body.nurseryownerId, isApproved: false })
-        .then(result => {
+        .then(async result => {
             if (result.deletedCount == 1) {
-                let transporter = nodemailer.createTransport({
-                    host: "smtp.gmail.com",
-                    port: 587,
-                    secure: false,
-                    requireTLS: true,
-                    auth: {
-                        user: "thegreenland.prakriti@gmail.com",
-                        pass: "prakriti@123",
-                    },
-                });
+                // let transporter = nodemailer.createTransport({
+                //     host: "smtp.gmail.com",
+                //     port: 587,
+                //     secure: false,
+                //     requireTLS: true,
+                //     auth: {
+                //         user: "thegreenland.prakriti@gmail.com",
+                //         pass: "prakriti@123",
+                //     },
+                // });
 
-                var message = {
-                    from: "thegreenland.prakriti@gmail.com",
-                    to: request.body.nurseryOwnerEmail,
-                    subject: "🚨 Message Form Prakritee 🚨",
-                    html: `
+                // var message = {
+                //     from: "thegreenland.prakriti@gmail.com",
+                //     to: request.body.nurseryOwnerEmail,
+                //     subject: "🚨 Message Form Prakritee 🚨",
+                //     html: `
+                //  <p>Your Nursery Is Verified By The Admin.And Admin rejected your request for join the Prakriti.com. Because of some resion</p>
+                //  <br>
+                //  <p>If Have Any Objection so don't hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">thegreenland.prakriti@gmail.com</a>
+                //  `
+                // };
+
+                // transporter.sendMail(message, (err, info) => {
+                //     if (err) {
+                //         console.log(err);
+                //     } else {
+                //         console.log("SUCCESS===================================\n" + info);
+                //     }
+                // });
+
+                var flag = await Email.sendMail(request.body.nurseryOwnerEmail, "🚨 Message Form Prakritee 🚨", `
                  <p>Your Nursery Is Verified By The Admin.And Admin rejected your request for join the Prakriti.com. Because of some resion</p>
                  <br>
-                 <p>If Have Any Objection so don't hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">thegreenland.prakriti@gmail.com</a>
-                 `
-                };
+                 <p>If Have Any Objection so don't </p>
+                 `);
 
-                transporter.sendMail(message, (err, info) => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log("SUCCESS===================================\n" + info);
-                    }
-                });
-                return response.status(201).json({ success: "Successfully Rejected" })
-
+                if (flag)
+                    return response.status(201).json({ success: "Successfully Rejected" })
+                else
+                    return response.status(201).json({ message: "Successfully Rejected but didn't notify the owner" })
             } else {
                 console.log(result)
                 return response.status(201).json({ failed: "Not Rejected" })
@@ -356,35 +385,39 @@ exports.blockNursery = (request, response) => {
     })
         .then(result => {
             if (result.modifiedCount == 1) {
-                NurseryOwner.findOne({ _id: request.body.nurseryownerId }).then(nurseryowner => {
+                NurseryOwner.findOne({ _id: request.body.nurseryownerId }).then(async nurseryowner => {
                     if (nurseryowner) {
-                        let transporter = nodemailer.createTransport({
-                            host: "smtp.gmail.com",
-                            port: 587,
-                            secure: false,
-                            requireTLS: true,
-                            auth: {
-                                user: "thegreenland.prakriti@gmail.com",
-                                pass: "prakriti@123",
-                            },
-                        });
+                        // let transporter = nodemailer.createTransport({
+                        //     host: "smtp.gmail.com",
+                        //     port: 587,
+                        //     secure: false,
+                        //     requireTLS: true,
+                        //     auth: {
+                        //         user: "thegreenland.prakriti@gmail.com",
+                        //         pass: "prakriti@123",
+                        //     },
+                        // });
 
-                        var message = {
-                            from: "thegreenland.prakriti@gmail.com",
-                            to: nurseryowner.nurseryOwnerEmail,
-                            subject: "🚨 Alert From Prakritee 🚨",
-                            html: '<p>Your account is blocked by the Prakritee Admin</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
-                        };
+                        // var message = {
+                        //     from: "thegreenland.prakriti@gmail.com",
+                        //     to: nurseryowner.nurseryOwnerEmail,
+                        //     subject: "🚨 Alert From Prakritee 🚨",
+                        //     html: '<p>Your account is blocked by the Prakritee Admin</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+                        // };
 
-                        transporter.sendMail(message, (err, info) => {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                console.log("SUCCESS===================================\n" + info);
-                            }
-                        });
+                        // transporter.sendMail(message, (err, info) => {
+                        //     if (err) {
+                        //         console.log(err);
+                        //     } else {
+                        //         console.log("SUCCESS===================================\n" + info);
+                        //     }
+                        // });
 
-                        return response.status(201).json({ success: "Successfully Blocked Nursery Owner" });
+                        var flag = await Email.sendMail(nurseryowner.nurseryOwnerEmail, "🚨 Alert From Prakritee 🚨", `<p>Your account is blocked by the Prakritee Admin</p>`);
+                        if (flag)
+                            return response.status(201).json({ success: "Successfully Blocked Nursery Owner" });
+                        else
+                            return response.status(201).json({ message: "Blocked But Notification Not Sent.." });
                     } else
                         return response.status(201).json({ message: "Blocked But Notification Not Sent.." });
 
@@ -408,35 +441,39 @@ exports.unBlockNursery = (request, response) => {
     })
         .then(result => {
             if (result.modifiedCount == 1) {
-                NurseryOwner.findOne({ _id: request.body.nurseryownerId }).then(nurseryowner => {
+                NurseryOwner.findOne({ _id: request.body.nurseryownerId }).then(async nurseryowner => {
                     if (nurseryowner) {
-                        let transporter = nodemailer.createTransport({
-                            host: "smtp.gmail.com",
-                            port: 587,
-                            secure: false,
-                            requireTLS: true,
-                            auth: {
-                                user: "thegreenland.prakriti@gmail.com",
-                                pass: "prakriti@123",
-                            },
-                        });
+                        // let transporter = nodemailer.createTransport({
+                        //     host: "smtp.gmail.com",
+                        //     port: 587,
+                        //     secure: false,
+                        //     requireTLS: true,
+                        //     auth: {
+                        //         user: "thegreenland.prakriti@gmail.com",
+                        //         pass: "prakriti@123",
+                        //     },
+                        // });
 
-                        var message = {
-                            from: "thegreenland.prakriti@gmail.com",
-                            to: nurseryowner.nurseryOwnerEmail,
-                            subject: "🎉 Alert From Prakritee 🎉",
-                            html: '<p>Your account is Unblocked by the Prakritee Admin. Now you can signin in Prakritee.com</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
-                        };
+                        // var message = {
+                        //     from: "thegreenland.prakriti@gmail.com",
+                        //     to: nurseryowner.nurseryOwnerEmail,
+                        //     subject: "🎉 Alert From Prakritee 🎉",
+                        //     html: '<p>Your account is Unblocked by the Prakritee Admin. Now you can signin in Prakritee.com</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+                        // };
 
-                        transporter.sendMail(message, (err, info) => {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                console.log("SUCCESS===================================\n" + info);
-                            }
-                        });
+                        // transporter.sendMail(message, (err, info) => {
+                        //     if (err) {
+                        //         console.log(err);
+                        //     } else {
+                        //         console.log("SUCCESS===================================\n" + info);
+                        //     }
+                        // });
 
-                        return response.status(200).json({ success: "Successfully Unblocked Nursery Owner" });
+                        var flag = await Email.sendMail(nurseryowner.nurseryOwnerEmail, "🎉 Alert From Prakritee 🎉", `<p>Your account is Unblocked by the Prakritee Admin. Now you can signin in Prakritee.com</p>`);
+                        if (flag)
+                            return response.status(200).json({ success: "Successfully Unblocked Nursery Owner" });
+                        else
+                            return response.status(201).json({ message: "Unblocked But Notification Not Sent.." });
                     } else
                         return response.status(201).json({ message: "Unblocked But Notification Not Sent.." });
 
