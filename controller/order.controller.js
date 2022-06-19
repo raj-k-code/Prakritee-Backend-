@@ -5,6 +5,7 @@ const User = require('../model/user.model');
 const nodemailer = require("nodemailer");
 const Razorpay = require("razorpay");
 const Product = require("../model/product.model");
+const Email = require('../other/sendEmail');
 
 var instance = new Razorpay({
     key_id: "rzp_test_2ZGv8MA0qkfdTz",
@@ -13,7 +14,9 @@ var instance = new Razorpay({
 
 exports.order = (request, response) => {
     instance.orders.create({
-        amount: request.body.total + "00",
+        // amount: request.body.total + "00",
+        amount: '1',
+
         currency: "INR",
     },
         (err, order) => {
@@ -30,45 +33,49 @@ exports.order = (request, response) => {
                     .then((result) => {
                         if (request.body.whose == 1) {
                             User.findOne({ _id: result.userId })
-                                .then((user) => {
+                                .then(async (user) => {
                                     //email sending
-                                    let transporter = nodemailer.createTransport({
-                                        host: "smtp.gmail.com",
-                                        port: 587,
-                                        secure: false,
-                                        requireTLS: true,
-                                        auth: {
-                                            user: "thegreenland.prakriti@gmail.com",
-                                            pass: "prakriti@123",
-                                        },
-                                    });
+                                    // let transporter = nodemailer.createTransport({
+                                    //     host: "smtp.gmail.com",
+                                    //     port: 587,
+                                    //     secure: false,
+                                    //     requireTLS: true,
+                                    //     auth: {
+                                    //         user: "thegreenland.prakriti@gmail.com",
+                                    //         pass: "prakriti@123",
+                                    //     },
+                                    // });
 
-                                    var message = {
-                                        from: "thegreenland.prakriti@gmail.com",
-                                        to: user.userEmail,
-                                        subject: "Your Order Is Placed",
-                                        html: `
-                                       <h1>Order Will Be Deliver Soon</h1>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-                                     `
-                                    };
+                                    // var message = {
+                                    //     from: "thegreenland.prakriti@gmail.com",
+                                    //     to: user.userEmail,
+                                    //     subject: "Your Order Is Placed",
+                                    //     html: `
+                                    //    <h1>Order Will Be Deliver Soon</h1>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                                    //  `
+                                    // };
 
-                                    transporter.sendMail(message, (err, info) => {
-                                        if (err) {
-                                            console.log(err);
-                                        } else {
-                                            console.log(
-                                                "SUCCESS===================================\n" + info
-                                            );
-                                        }
-                                    });
+                                    // transporter.sendMail(message, (err, info) => {
+                                    //     if (err) {
+                                    //         console.log(err);
+                                    //     } else {
+                                    //         console.log(
+                                    //             "SUCCESS===================================\n" + info
+                                    //         );
+                                    //     }
+                                    // });
+
+                                    var flag = await Email.sendMail(user.userEmail, "Your Order Is Placed", `<h1>Order Will Be Deliver Soon</h1>
+                                       <p>Thanks for shopping with us.</p>
+                                    `);
 
                                     //sms sending
-                                    var option = {
-                                        authorization: "AqpRDdaVo8JnHEXKQGliyYvB0594L7WkjPcmxrIe2hC3g1MfTtZbRkCjvVMgJFeuO483zPcBaxYdXmKW",
-                                        message: "Congratulations!!! your order is succesfully placed.....",
-                                        numbers: [result.Mobile],
-                                    };
-                                    fast2sms.sendMessage(option);
+                                    // var option = {
+                                    //     authorization: "AqpRDdaVo8JnHEXKQGliyYvB0594L7WkjPcmxrIe2hC3g1MfTtZbRkCjvVMgJFeuO483zPcBaxYdXmKW",
+                                    //     message: "Congratulations!!! your order is succesfully placed.....",
+                                    //     numbers: [result.Mobile],
+                                    // };
+                                    // fast2sms.sendMessage(option);
                                     console.log(result);
                                     return response
                                         .status(201)
@@ -81,45 +88,41 @@ exports.order = (request, response) => {
                                 });
                         } else {
                             Gardener.findOne({ _id: result.userId })
-                                .then((gardener) => {
+                                .then(async (gardener) => {
                                     //email sending
-                                    let transporter = nodemailer.createTransport({
-                                        host: "smtp.gmail.com",
-                                        port: 587,
-                                        secure: false,
-                                        requireTLS: true,
-                                        auth: {
-                                            user: "thegreenland.prakriti@gmail.com",
-                                            pass: "prakriti@123",
-                                        },
-                                    });
+                                    // let transporter = nodemailer.createTransport({
+                                    //     host: "smtp.gmail.com",
+                                    //     port: 587,
+                                    //     secure: false,
+                                    //     requireTLS: true,
+                                    //     auth: {
+                                    //         user: "thegreenland.prakriti@gmail.com",
+                                    //         pass: "prakriti@123",
+                                    //     },
+                                    // });
 
-                                    var message = {
-                                        from: "thegreenland.prakriti@gmail.com",
-                                        to: gardener.gardenerEmail,
-                                        subject: "Your Order Is Placed",
-                                        html: `
-                                       <h1>Order Will Be Deliver Soon</h1>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-                                     `
-                                    };
+                                    // var message = {
+                                    //     from: "thegreenland.prakriti@gmail.com",
+                                    //     to: gardener.gardenerEmail,
+                                    //     subject: "Your Order Is Placed",
+                                    //     html: `
+                                    //    <h1>Order Will Be Deliver Soon</h1>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                                    //  `
+                                    // };
 
-                                    transporter.sendMail(message, (err, info) => {
-                                        if (err) {
-                                            console.log(err);
-                                        } else {
-                                            console.log(
-                                                "SUCCESS===================================\n" + info
-                                            );
-                                        }
-                                    });
+                                    // transporter.sendMail(message, (err, info) => {
+                                    //     if (err) {
+                                    //         console.log(err);
+                                    //     } else {
+                                    //         console.log(
+                                    //             "SUCCESS===================================\n" + info
+                                    //         );
+                                    //     }
+                                    // });
 
-                                    //sms sending
-                                    var option = {
-                                        authorization: "AqpRDdaVo8JnHEXKQGliyYvB0594L7WkjPcmxrIe2hC3g1MfTtZbRkCjvVMgJFeuO483zPcBaxYdXmKW",
-                                        message: "Congratulations!!! your order is succesfully placed.....",
-                                        numbers: [result.Mobile],
-                                    };
-                                    fast2sms.sendMessage(option);
+                                    var flag = await Email.sendMail(gardener.gardenerEmail, "Your Order Is Placed", `<h1>Order Will Be Deliver Soon</h1>
+                                       <p>Thanks for shopping with us.</p>
+                                    `);
 
                                     return response
                                         .status(201)

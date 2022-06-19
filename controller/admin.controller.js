@@ -8,6 +8,7 @@ const NurseryOwner = require("../model/nurseryowner.model");
 const User = require("../model/user.model");
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const Email = require('../other/sendEmail');
 
 exports.signin = (request, response) => {
     const error = validationResult(request);
@@ -199,43 +200,51 @@ exports.userList = (request, response) => {
 exports.forgotPassword = (request, response) => {
     Admin.findOne({
         email: request.body.email
-    }).then(result => {
+    }).then(async result => {
         if (result) {
 
-            console.log(result.password)
+            // let transporter = nodemailer.createTransport({
+            //     host: "smtp.gmail.com",
+            //     port: 587,
+            //     secure: false,
+            //     requireTLS: true,
+            //     auth: {
+            //         user: "thegreenland.prakriti@gmail.com",
+            //         pass: "prakriti@123",
+            //     },
+            // });
 
-            let transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 587,
-                secure: false,
-                requireTLS: true,
-                auth: {
-                    user: "thegreenland.prakriti@gmail.com",
-                    pass: "prakriti@123",
-                },
-            });
+            // var message = {
+            //     from: "thegreenland.prakriti@gmail.com",
+            //     to: result.email,
+            //     subject: "Message Form Prakritee",
+            //     html: `
+            //      <p>Your old password is here 👇🏻</p>
+            //      <br>
+            //      <h3>PASSWORD: ` + result.password + `</h3>
+            //      <br>
+            //      <p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>
+            //      `
+            // };
 
-            var message = {
-                from: "thegreenland.prakriti@gmail.com",
-                to: result.email,
-                subject: "Message Form Prakritee",
-                html: `
+            // transporter.sendMail(message, (err, info) => {
+            //     if (err) {
+            //         console.log(err);
+            //     } else {
+            //         console.log("SUCCESS===================================\n" + info);
+            //     }
+            // });
+
+            var flag = await Email.sendMail(result.email, "Forgot Password", `
                  <p>Your old password is here 👇🏻</p>
                  <br>
                  <h3>PASSWORD: ` + result.password + `</h3>
-                 <br>
-                 <p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>
-                 `
-            };
+                 `);
 
-            transporter.sendMail(message, (err, info) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("SUCCESS===================================\n" + info);
-                }
-            });
-            return response.status(200).json({ success: "check your email", result: result });
+            if (flag)
+                return response.status(200).json({ success: "check your email", result: result });
+            else
+                return response.status(200).json({ message: "Please try again later" })
         } else {
             return response.status(200).json({ message: "No User Found With This Email Address" })
         }

@@ -5,7 +5,7 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const { response } = require("express");
 const crypto = require('crypto');
-
+const Email = require('../other/sendEmail');
 const key = "prakritee@123@05";
 const algo = "aes-256-cbc"
 
@@ -23,32 +23,35 @@ exports.signup = (request, response) => {
     request.body.userPassword = crypted;
 
     User.create(request.body)
-        .then(result => {
-            let transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 587,
-                secure: false,
-                requireTLS: true,
-                auth: {
-                    user: "thegreenland.prakriti@gmail.com",
-                    pass: "prakriti@123",
-                },
-            });
+        .then(async result => {
+            // let transporter = nodemailer.createTransport({
+            //     host: "smtp.gmail.com",
+            //     port: 587,
+            //     secure: false,
+            //     requireTLS: true,
+            //     auth: {
+            //         user: "thegreenland.prakriti@gmail.com",
+            //         pass: "prakriti@123",
+            //     },
+            // });
 
-            var message = {
-                from: "thegreenland.prakriti@gmail.com",
-                to: result.userEmail,
-                subject: "Confirm your account on Prakritee",
-                html: '<p>you are a nice person for signing up with Prakritee! You must follow this link within 30 days of registration to activate your account:</p><a href= "https://prakritee-user.herokuapp.com/' + result._id + '">click here</a><p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
-            };
+            // var message = {
+            //     from: "thegreenland.prakriti@gmail.com",
+            //     to: result.userEmail,
+            //     subject: "Confirm your account on Prakritee",
+            //     html: '<p>you are a nice person for signing up with Prakritee! You must follow this link within 30 days of registration to activate your account:</p><a href= "https://prakritee-user.herokuapp.com/' + result._id + '">click here</a><p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+            // };
 
-            transporter.sendMail(message, (err, info) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("SUCCESS===================================\n" + info);
-                }
-            });
+            // transporter.sendMail(message, (err, info) => {
+            //     if (err) {
+            //         console.log(err);
+            //     } else {
+            //         console.log("SUCCESS===================================\n" + info);
+            //     }
+            // });
+
+            var flag = await Email.sendMail(result.userEmail, "Verify Your Gmail Account", `<p>you are a nice person for signing up with Prakritee! You must follow this link within 30 days of registration to activate your account:</p><a href= "https://prakritee-user.herokuapp.com/user/verify-account/` + result._id + `">click here</a>`);
+
             return response.status(201).json(result)
         }).catch(err => {
             console.log(err);
@@ -181,45 +184,56 @@ exports.getVerifiedAccount = (request, response) => {
 exports.forgotPassword = (request, response) => {
     User.findOne({
         userEmail: request.body.userEmail
-    }).then(result => {
+    }).then(async result => {
         if (result) {
             var decipher = crypto.createDecipher(algo, key)
             var dec = decipher.update(result.userPassword, 'hex', 'utf8')
             dec += decipher.final('utf8');
             result.userPassword = dec;
 
-            let transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 587,
-                secure: false,
-                requireTLS: true,
-                auth: {
-                    user: "thegreenland.prakriti@gmail.com",
-                    pass: "prakriti@123",
-                },
-            });
+            // let transporter = nodemailer.createTransport({
+            //     host: "smtp.gmail.com",
+            //     port: 587,
+            //     secure: false,
+            //     requireTLS: true,
+            //     auth: {
+            //         user: "thegreenland.prakriti@gmail.com",
+            //         pass: "prakriti@123",
+            //     },
+            // });
 
-            var message = {
-                from: "thegreenland.prakriti@gmail.com",
-                to: result.userEmail,
-                subject: "Message Form Prakritee",
-                html: `
+            // var message = {
+            //     from: "thegreenland.prakriti@gmail.com",
+            //     to: result.userEmail,
+            //     subject: "Message Form Prakritee",
+            //     html: `
+            //      <p>Your old password is here 👇🏻</p>
+            //      <br>
+            //      <h3>PASSWORD: ` + result.userPassword + `</h3>
+            //      <br>
+            //      <p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>
+            //      `
+            // };
+
+            // transporter.sendMail(message, (err, info) => {
+            //     if (err) {
+            //         console.log(err);
+            //     } else {
+            //         console.log("SUCCESS===================================\n" + info);
+            //     }
+            // });
+            var flag = await Email.sendMail(result.userEmail, "Forgot Password", `
                  <p>Your old password is here 👇🏻</p>
                  <br>
                  <h3>PASSWORD: ` + result.userPassword + `</h3>
-                 <br>
-                 <p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>
-                 `
-            };
+                 `);
 
-            transporter.sendMail(message, (err, info) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("SUCCESS===================================\n" + info);
-                }
-            });
-            return response.status(200).json({ success: "check your email", result: result });
+            if (flag) {
+                return response.status(200).json({ success: "check your email", result: result });
+            }
+            else {
+                return response.status(200).json({ message: "Something went wrong please try again later.." });
+            }
         } else {
             return response.status(200).json({ message: "No User Found With This Email Address" })
         }
@@ -253,38 +267,40 @@ exports.blockUser = (request, response) => {
         }
     })
         .then(result => {
-            console.log(result);
-
             if (result.modifiedCount == 1) {
-                User.findOne({ _id: request.body.userId }).then(user => {
+                User.findOne({ _id: request.body.userId }).then(async user => {
                     if (user) {
-                        let transporter = nodemailer.createTransport({
-                            host: "smtp.gmail.com",
-                            port: 587,
-                            secure: false,
-                            requireTLS: true,
-                            auth: {
-                                user: "thegreenland.prakriti@gmail.com",
-                                pass: "prakriti@123",
-                            },
-                        });
+                        // let transporter = nodemailer.createTransport({
+                        //     host: "smtp.gmail.com",
+                        //     port: 587,
+                        //     secure: false,
+                        //     requireTLS: true,
+                        //     auth: {
+                        //         user: "thegreenland.prakriti@gmail.com",
+                        //         pass: "prakriti@123",
+                        //     },
+                        // });
 
-                        var message = {
-                            from: "thegreenland.prakriti@gmail.com",
-                            to: user.userEmail,
-                            subject: "🚨 Alert From Prakritee 🚨",
-                            html: '<p>Your account is blocked by the Prakritee Admin</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
-                        };
+                        // var message = {
+                        //     from: "thegreenland.prakriti@gmail.com",
+                        //     to: user.userEmail,
+                        //     subject: "🚨 Alert From Prakritee 🚨",
+                        //     html: '<p>Your account is blocked by the Prakritee Admin</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+                        // };
 
-                        transporter.sendMail(message, (err, info) => {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                console.log("SUCCESS===================================\n" + info);
-                            }
-                        });
+                        // transporter.sendMail(message, (err, info) => {
+                        //     if (err) {
+                        //         console.log(err);
+                        //     } else {
+                        //         console.log("SUCCESS===================================\n" + info);
+                        //     }
+                        // });
 
-                        return response.status(200).json({ success: "Successfully Blocked User" });
+                        var flag = await Email.sendMail(user.userEmail, "🚨 Alert From Prakritee 🚨", `<p>Your account is blocked by the Prakritee Admin.If you have any objection then contact with admin.</p>`);
+                        if (flag)
+                            return response.status(200).json({ success: "Successfully Blocked User" });
+                        else
+                            return response.status(201).json({ failed: "Blocked But Notification Not Sent.." });
                     } else
                         return response.status(201).json({ failed: "Blocked But Notification Not Sent.." });
 
@@ -311,35 +327,39 @@ exports.unBlockUser = (request, response) => {
         .then(result => {
             console.log(result);
             if (result.modifiedCount == 1) {
-                User.findOne({ _id: request.body.userId }).then(user => {
+                User.findOne({ _id: request.body.userId }).then(async user => {
                     if (user) {
-                        let transporter = nodemailer.createTransport({
-                            host: "smtp.gmail.com",
-                            port: 587,
-                            secure: false,
-                            requireTLS: true,
-                            auth: {
-                                user: "thegreenland.prakriti@gmail.com",
-                                pass: "prakriti@123",
-                            },
-                        });
+                        // let transporter = nodemailer.createTransport({
+                        //     host: "smtp.gmail.com",
+                        //     port: 587,
+                        //     secure: false,
+                        //     requireTLS: true,
+                        //     auth: {
+                        //         user: "thegreenland.prakriti@gmail.com",
+                        //         pass: "prakriti@123",
+                        //     },
+                        // });
 
-                        var message = {
-                            from: "thegreenland.prakriti@gmail.com",
-                            to: user.userEmail,
-                            subject: "🎉 Alert From Prakritee 🎉",
-                            html: '<p>Your account is Unblocked by the Prakritee Admin. Now you can signin in Prakritee.com</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
-                        };
+                        // var message = {
+                        //     from: "thegreenland.prakriti@gmail.com",
+                        //     to: user.userEmail,
+                        //     subject: "🎉 Alert From Prakritee 🎉",
+                        //     html: '<p>Your account is Unblocked by the Prakritee Admin. Now you can signin in Prakritee.com</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>',
+                        // };
 
-                        transporter.sendMail(message, (err, info) => {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                console.log("SUCCESS===================================\n" + info);
-                            }
-                        });
+                        // transporter.sendMail(message, (err, info) => {
+                        //     if (err) {
+                        //         console.log(err);
+                        //     } else {
+                        //         console.log("SUCCESS===================================\n" + info);
+                        //     }
+                        // });
 
-                        return response.status(200).json({ success: "Successfully Unblocked User" });
+                        var flag = await Email.sendMail(user.userEmail, "🎉 Alert From Prakritee 🎉", `<p>Your account is Unblocked by the Prakritee Admin. Now you can signin in Prakritee.com</p>`);
+                        if (flag)
+                            return response.status(200).json({ success: "Successfully Unblocked User" });
+                        else
+                            return response.status(201).json({ failed: "Unblocked But Notification Not Sent.." });
                     } else
                         return response.status(201).json({ failed: "Unblocked But Notification Not Sent.." });
 
