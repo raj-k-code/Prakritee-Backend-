@@ -15,7 +15,7 @@ var instance = new Razorpay({
 exports.order = (request, response) => {
     instance.orders.create({
         // amount: request.body.total + "00",
-        amount: '1',
+        amount: "100",
 
         currency: "INR",
     },
@@ -228,3 +228,4 @@ exports.changeOrderStatus = (request, response) => {
                 .json({ error: "Internal Server Error......." });
         });
 };
+//
