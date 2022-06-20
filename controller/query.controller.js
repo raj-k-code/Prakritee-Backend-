@@ -27,27 +27,6 @@ exports.delete = (request, response, next) => {
     Query.deleteOne({ _id: request.body.queryId })
         .then(async result => {
             if (result.deletedCount == 1) {
-                // let transporter = nodemailer.createTransport({
-                //     host: "smtp.gmail.com",
-                //     port: 587,
-                //     secure: false,
-                //     requireTLS: true,
-                //     auth: {
-                //         user: "thegreenland.prakriti@gmail.com",
-                //         pass: "prakriti@123",
-                //     },
-                // });
-
-                // var message = {
-                //     from: "thegreenland.prakriti@gmail.com",
-                //     to: request.body.email,
-                //     subject: "Query Is Rejected By Admin",
-                //     text: "Sorry Your Query Is Without Sense."
-                // };
-
-                // transporter.sendMail(message, (err, info) => {
-                //     if (err) { } else { }
-                // });
 
                 var flag = await Email.sendMail(request.body.email, "Query Is Rejected By Admin", `<p>Sorry Your Query Is Without Sense.</p>`);
 
@@ -79,43 +58,6 @@ exports.responseQuery = async (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty())
         return response.status(400).json({ errors: errors.array() });
-
-    // let transporter = nodemailer.createTransport({
-    //     host: "smtp.gmail.com",
-    //     port: 587,
-    //     secure: false,
-    //     requireTLS: true,
-    //     auth: {
-    //         user: "thegreenland.prakriti@gmail.com",
-    //         pass: "prakriti@123",
-    //     },
-    // });
-
-    // var message = {
-    //     from: "thegreenland.prakriti@gmail.com",
-    //     to: request.body.email,
-    //     subject: "Response On Your Query",
-    //     text: request.body.message
-    // };
-
-    // transporter.sendMail(message, (err, info) => {
-    //     if (err) {
-    //         console.log(err);
-    //         return response.status(200).json({ failed: "Response Not Sent" });
-    //     } else {
-
-    //         Query.deleteOne({ _id: request.body.queryId })
-    //             .then(result => {
-    //                 if (result.deletedCount == 1) {
-    //                     return response.status(200).json({ success: "Response Sent" });
-    //                 } else
-    //                     return response.status(201).json({ failed: "Deleted" });
-    //             })
-    //             .catch(err => {
-    //                 return response.status(500).json({ error: "Internal Server Error......." });
-    //             });
-    //     }
-    // });
 
     var flag = await Email.sendMail(request.body.email, "Response On Your Query", request.body.message);
     if (flag) {

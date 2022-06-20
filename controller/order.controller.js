@@ -34,36 +34,6 @@ exports.order = (request, response) => {
                         if (request.body.whose == 1) {
                             User.findOne({ _id: result.userId })
                                 .then(async (user) => {
-                                    //email sending
-                                    // let transporter = nodemailer.createTransport({
-                                    //     host: "smtp.gmail.com",
-                                    //     port: 587,
-                                    //     secure: false,
-                                    //     requireTLS: true,
-                                    //     auth: {
-                                    //         user: "thegreenland.prakriti@gmail.com",
-                                    //         pass: "prakriti@123",
-                                    //     },
-                                    // });
-
-                                    // var message = {
-                                    //     from: "thegreenland.prakriti@gmail.com",
-                                    //     to: user.userEmail,
-                                    //     subject: "Your Order Is Placed",
-                                    //     html: `
-                                    //    <h1>Order Will Be Deliver Soon</h1>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-                                    //  `
-                                    // };
-
-                                    // transporter.sendMail(message, (err, info) => {
-                                    //     if (err) {
-                                    //         console.log(err);
-                                    //     } else {
-                                    //         console.log(
-                                    //             "SUCCESS===================================\n" + info
-                                    //         );
-                                    //     }
-                                    // });
 
                                     var flag = await Email.sendMail(user.userEmail, "Your Order Is Placed", `<h1>Order Will Be Deliver Soon</h1>
                                        <p>Thanks for shopping with us.</p>
@@ -89,36 +59,6 @@ exports.order = (request, response) => {
                         } else {
                             Gardener.findOne({ _id: result.userId })
                                 .then(async (gardener) => {
-                                    //email sending
-                                    // let transporter = nodemailer.createTransport({
-                                    //     host: "smtp.gmail.com",
-                                    //     port: 587,
-                                    //     secure: false,
-                                    //     requireTLS: true,
-                                    //     auth: {
-                                    //         user: "thegreenland.prakriti@gmail.com",
-                                    //         pass: "prakriti@123",
-                                    //     },
-                                    // });
-
-                                    // var message = {
-                                    //     from: "thegreenland.prakriti@gmail.com",
-                                    //     to: gardener.gardenerEmail,
-                                    //     subject: "Your Order Is Placed",
-                                    //     html: `
-                                    //    <h1>Order Will Be Deliver Soon</h1>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-                                    //  `
-                                    // };
-
-                                    // transporter.sendMail(message, (err, info) => {
-                                    //     if (err) {
-                                    //         console.log(err);
-                                    //     } else {
-                                    //         console.log(
-                                    //             "SUCCESS===================================\n" + info
-                                    //         );
-                                    //     }
-                                    // });
 
                                     var flag = await Email.sendMail(gardener.gardenerEmail, "Your Order Is Placed", `<h1>Order Will Be Deliver Soon</h1>
                                        <p>Thanks for shopping with us.</p>

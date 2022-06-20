@@ -203,38 +203,6 @@ exports.forgotPassword = (request, response) => {
     }).then(async result => {
         if (result) {
 
-            // let transporter = nodemailer.createTransport({
-            //     host: "smtp.gmail.com",
-            //     port: 587,
-            //     secure: false,
-            //     requireTLS: true,
-            //     auth: {
-            //         user: "thegreenland.prakriti@gmail.com",
-            //         pass: "prakriti@123",
-            //     },
-            // });
-
-            // var message = {
-            //     from: "thegreenland.prakriti@gmail.com",
-            //     to: result.email,
-            //     subject: "Message Form Prakritee",
-            //     html: `
-            //      <p>Your old password is here 👇🏻</p>
-            //      <br>
-            //      <h3>PASSWORD: ` + result.password + `</h3>
-            //      <br>
-            //      <p>Have fun, and dont hesitate to contact us with your feedback</p><br><p> The Prakritee Team</p><a href="#">Prakritee@gmail.com</a>
-            //      `
-            // };
-
-            // transporter.sendMail(message, (err, info) => {
-            //     if (err) {
-            //         console.log(err);
-            //     } else {
-            //         console.log("SUCCESS===================================\n" + info);
-            //     }
-            // });
-
             var flag = await Email.sendMail(result.email, "Forgot Password", `
                  <p>Your old password is here 👇🏻</p>
                  <br>
