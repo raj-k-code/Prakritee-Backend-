@@ -21,7 +21,7 @@ exports.signup = (request, response) => {
     var crypted = cipher.update(request.body.nurseryOwnerPassword, 'utf8', 'hex');
     crypted += cipher.final('hex');
     request.body.nurseryOwnerPassword = crypted;
-
+        
     NurseryOwner.create(request.body)
         .then(async result => {
 

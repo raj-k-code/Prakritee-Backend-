@@ -31,6 +31,8 @@ app.use(express.static(path.join(__dirname, "public")));
 mongoose
     .connect(
         "mongodb+srv://raj-k-code:Mamta%4026@mongo-test.6wrm9.mongodb.net/PrakriteeDB?retryWrites=true&w=majority"
+        // "mongodb://localhost:27017/PrakriteeDB?retryWrites=true&w=majority"
+
     )
     .then((result) => {
         console.log("Data base connnected");
